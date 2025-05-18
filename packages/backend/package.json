@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch run src/index.ts"
+  },
+  "dependencies": {
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/shortid": "^2.2.0",
+    "@types/ws": "^8.18.1",
+    "shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
