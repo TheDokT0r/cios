@@ -32,8 +32,10 @@
     }
   };
 
-  function onEnterClick(e: MouseEvent) {
-    e.preventDefault();
+  function onEnterClick(e?: MouseEvent) {
+    if(e) {
+      e.preventDefault();
+    }
     const valid = isRoomNameValid(roomId);
 
     if (valid === "empty") {
@@ -62,9 +64,9 @@
 {:else}
   <div>
     <h1>Welcome to chatroom</h1>
-    <form>
+    <form onsubmit={() => onEnterClick()}>
       <input bind:value={roomId} type="text" placeholder="Room ID" />
-      <button onclick={onEnterClick}>Enter</button>
+      <button>Enter</button>
     </form>
     <div>
       <p>Your username is: {username}</p>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { remindNick, ws } from "../libs/socket";
   import {
     ServerAction,
@@ -13,7 +13,20 @@
   let myNick = $state("");
   let userInput = $state("");
 
+  $effect(() => console.log(messages));
+
+  function joinRoom() {
+    const urlVars = document.URL.toLocaleLowerCase().split("/channel/c=");
+    const joinRoomMessage: UserMessage = {
+      action: UserAction.JOIN,
+      data: urlVars[urlVars.length - 1],
+    };
+
+    ws.send(JSON.stringify(joinRoomMessage));
+  }
+
   onMount(() => {
+    joinRoom();
     remindNick();
 
     ws.onmessage = (ev) => {
@@ -33,14 +46,26 @@
     };
   });
 
+  onDestroy(() => {
+    const leaveMessage: UserMessage = {
+      action: UserAction.LEAVE,
+      data: "",
+    };
+
+    ws.send(JSON.stringify(leaveMessage));
+  });
+
   function onSendClick(e: MouseEvent) {
     e.preventDefault();
+    if (userInput.length === 0) return;
+
     const message: UserMessage = {
       action: UserAction.MESSAGE,
       data: userInput,
     };
 
     ws.send(JSON.stringify(message));
+    userInput = "";
   }
 </script>
 

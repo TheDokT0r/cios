@@ -1,10 +1,10 @@
 export enum UserAction {
-  JOIN = "join",
-  LEAVE = "leave",
-  MESSAGE = "message",
-  RENAME = "rename",
-  REMIND_NICK = "nick", // Resends to the user his nick
-  // PREV_MESSAGES = "prev", // Requests from the server the previous messages of the chat
+  JOIN,
+  LEAVE,
+  MESSAGE,
+  RENAME,
+  REMIND_NICK, // Resends to the user his nick
+  // PREV_MESSAGES // Requests from the server the previous messages of the chat
 }
 
 export interface UserMessage {
@@ -13,13 +13,13 @@ export interface UserMessage {
 }
 
 export enum ServerAction {
-  ERROR = "error",
-  ROOM_ERROR = "room error",
-  MESSAGE = "message",
-  SERVER_MESSAGE = "server message",
-  USER_JOINED = "user joined",
-  USER_LEFT = "user left",
-  NICK = "nick",
+  ERROR,
+  ROOM_ERROR,
+  MESSAGE,
+  SERVER_MESSAGE,
+  USER_JOINED,
+  USER_LEFT,
+  NICK,
 }
 
 /**
@@ -34,14 +34,9 @@ export interface PostMessage {
 
 export function isRoomNameValid(
   roomName: string
-): "white spaces" | "empty" | "ok" {
-  if (roomName.length === 0) {
-    return "empty";
-  }
-
-  if (/\s/g.test(roomName)) {
-    return "white spaces";
-  }
-
+): "empty" | "white spaces" | "ok" {
+  if (!roomName.trim()) return "empty";
+  if (/\s/.test(roomName)) return "white spaces";
   return "ok";
 }
+

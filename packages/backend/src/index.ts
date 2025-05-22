@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { sendInvalidIpError, sendMessageToUser } from "./actions";
-import {
+import rooms, {
   addMemberToRoom,
   findUserRoom,
   sendMessageToAllPeopleInRoom,
@@ -47,6 +47,7 @@ wss.on("connection", (ws, req) => {
 
     const userIp = req.socket.remoteAddress;
     if (!userIp) {
+      console.error("Invalid ip")
       return sendInvalidIpError(ws);
     }
 
