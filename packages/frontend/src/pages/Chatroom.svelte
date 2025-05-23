@@ -75,7 +75,7 @@
   <div class="chat-container">
     <div id="chat-log" class="chat-log">
       {#each messages as message}
-        <Message {message} />
+        <Message {message} username={myNick} />
       {/each}
     </div>
 

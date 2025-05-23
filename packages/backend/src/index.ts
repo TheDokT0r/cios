@@ -47,7 +47,7 @@ wss.on("connection", (ws, req) => {
 
     const userIp = req.socket.remoteAddress;
     if (!userIp) {
-      console.error("Invalid ip")
+      console.error("Invalid ip");
       return sendInvalidIpError(ws);
     }
 

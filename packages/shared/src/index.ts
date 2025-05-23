@@ -4,7 +4,6 @@ export enum UserAction {
   MESSAGE,
   RENAME,
   REMIND_NICK, // Resends to the user his nick
-  // PREV_MESSAGES // Requests from the server the previous messages of the chat
 }
 
 export interface UserMessage {
@@ -20,6 +19,7 @@ export enum ServerAction {
   USER_JOINED,
   USER_LEFT,
   NICK,
+  HISTORY,
 }
 
 /**
@@ -39,4 +39,3 @@ export function isRoomNameValid(
   if (/\s/.test(roomName)) return "white spaces";
   return "ok";
 }
-

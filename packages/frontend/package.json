@@ -20,6 +20,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "@zerodevx/svelte-toast": "^0.9.6"
+    "@zerodevx/svelte-toast": "^0.9.6",
+    "date-fns": "^4.1.0"
   }
 }

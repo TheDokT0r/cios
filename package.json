@@ -1,7 +1,10 @@
 {
-    "name": "chatroom",
-    "private": "true",
-    "workspaces": [
-        "packages/*"
-    ]
+  "name": "chatroom",
+  "private": "true",
+  "workspaces": [
+    "packages/*"
+  ],
+  "trustedDependencies": [
+    "@parcel/watcher"
+  ]
 }

@@ -1,0 +1,12 @@
+FROM oven/bun:latest AS build
+WORKDIR /app
+COPY . .
+RUN bun i
+WORKDIR /app/packages/backend
+RUN bun build --compile --outfile=/build src/index.ts
+
+FROM debian:latest AS base
+COPY --from=build /build /usr/bin/
+ENV PORT=80
+EXPOSE 80
+ENTRYPOINT [ "build" ]
