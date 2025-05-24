@@ -8,6 +8,7 @@
     type UserMessage,
   } from "shared";
   import Message from "../components/Message.svelte";
+  import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
 
   let messages: PostMessage[] = $state([]);
   let myNick = $state("");
@@ -85,7 +86,9 @@
         rows="2"
         placeholder="Type your message..."
       ></textarea>
-      <button onclick={onSendClick} type="submit">Send</button>
+      <button onclick={onSendClick} type="submit">
+        <SendHorizontalIcon />
+      </button>
     </form>
   </div>
 {/if}
@@ -96,6 +99,7 @@
     flex-direction: column;
     height: 100vh;
     max-height: 100vh;
+    align-items: normal;
   }
 
   .chat-log {
@@ -103,14 +107,6 @@
     overflow-y: auto;
     padding: 1rem;
     background: #f7f7f7;
-  }
-
-  .chat-message {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background: white;
-    border-radius: 6px;
-    max-width: 80%;
   }
 
   .chat-input {

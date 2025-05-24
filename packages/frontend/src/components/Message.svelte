@@ -12,7 +12,7 @@
 
 <div class="message-container">
   <p class="message">
-    <b style={`color: ${username === message.username ? "red" : "black"}`}>
+    <b style={`color: ${username === message.username ? "rgb(255, 107, 107)" : "black"}`}>
       {message.username}:
     </b>
 
@@ -29,7 +29,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid black;
+  border: 1px solid white;
   border-radius: 6px;
   padding: 0.5rem;
 }
@@ -42,7 +42,7 @@
 .timestamp {
   margin-left: auto;
   font-size: 0.875rem;
-  color: #666;
+  color: #c7bcbc;
 }
 
 </style>

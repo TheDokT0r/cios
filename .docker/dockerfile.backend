@@ -1,7 +1,7 @@
 FROM oven/bun:latest AS build
 WORKDIR /app
 COPY . .
-RUN bun i
+RUN bun i --frozen-lockfile
 WORKDIR /app/packages/backend
 RUN bun build --compile --outfile=/build src/index.ts
 

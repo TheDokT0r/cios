@@ -1,10 +1,13 @@
 {
   "name": "chatroom",
   "private": "true",
-  "workspaces": [
-    "packages/*"
-  ],
+  "scripts": {
+    "start": "bun run --filter '*' dev"
+  },
   "trustedDependencies": [
     "@parcel/watcher"
+  ],
+  "workspaces": [
+    "packages/*"
   ]
 }

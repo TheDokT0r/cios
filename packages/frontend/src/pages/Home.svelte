@@ -9,6 +9,9 @@
     type UserMessage,
   } from "shared";
   import { ws } from "../libs/socket";
+  import "../styles/app.scss";
+  import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
+  import RepeatIcon from "@lucide/svelte/icons/repeat-2";
 
   let roomId = $state("");
   let username = $state("");
@@ -32,10 +35,8 @@
     }
   };
 
-  function onEnterClick(e?: MouseEvent) {
-    if(e) {
-      e.preventDefault();
-    }
+  function onEnterClick(e: SubmitEvent) {
+    e.preventDefault();
     const valid = isRoomNameValid(roomId);
 
     if (valid === "empty") {
@@ -62,15 +63,59 @@
 {#if loading}
   <div>Loading...</div>
 {:else}
-  <div>
+  <div class="home-container">
     <h1>Welcome to chatroom</h1>
-    <form onsubmit={() => onEnterClick()}>
+    <form onsubmit={(e) => onEnterClick(e)}>
       <input bind:value={roomId} type="text" placeholder="Room ID" />
-      <button>Enter</button>
+      <button>
+        <SendHorizontalIcon />
+      </button>
     </form>
-    <div>
-      <p>Your username is: {username}</p>
-      <button onclick={onRegenerateUsernameClick}>Regenerate</button>
+    <div class="username-container">
+      <p>Your username is: <span>{username}</span></p>
+      <button onclick={onRegenerateUsernameClick}>
+        <RepeatIcon scale="5rem" />
+      </button>
     </div>
   </div>
 {/if}
+
+<style lang="scss">
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Horizontal */
+    align-items: center; /* Vertical */
+    height: 100vh;
+
+    h1 {
+      font-size: 3rem;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      margin-right: 0.5rem;
+    }
+
+    .username-container {
+      position: fixed;
+      right: 0.5rem;
+      bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+
+      button {
+        margin-left: 0.5rem;
+      }
+
+      span {
+        color: rgb(255, 107, 107);
+      }
+    }
+  }
+</style>

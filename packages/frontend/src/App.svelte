@@ -1,9 +1,12 @@
-<script lang="ts">
+<script>
   import { onMount } from "svelte";
   import Home from "./pages/Home.svelte";
   import Chatroom from "./pages/Chatroom.svelte";
   import { SvelteToast } from "@zerodevx/svelte-toast";
   import { connected } from "./libs/socket";
+  import "@fontsource/rubik";
+  import TopAppBar from "./components/TopAppBar.svelte";
+  import LoadingPage from "./components/LoadingPage.svelte";
 
   let isConnected = $state(false);
   connected.subscribe((value) => {
@@ -24,6 +27,7 @@
 
 <main>
   <SvelteToast />
+  <TopAppBar />
 
   {#if isConnected}
     {#if getRoomId() === false}
@@ -32,8 +36,6 @@
       <Chatroom />
     {/if}
   {:else}
-    <main>
-      <h1>Establishing connection to server...</h1>
-    </main>
+  <LoadingPage />
   {/if}
 </main>
