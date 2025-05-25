@@ -14,6 +14,7 @@
     loadLogsFromLocalStorage,
     saveLogsToLocalStorage,
   } from "../libs/messagesInStorage";
+  import ServerMessage from "../components/ServerMessage.svelte";
 
   let messages: PostMessage[] = $state([]);
   let myNick = $state("");
@@ -32,17 +33,13 @@
       const message: PostMessage = JSON.parse(ev.data);
       if (!("type" in message)) return;
 
-      switch (message.type) {
-        case ServerAction.MESSAGE: {
-          messages.push(message);
-          saveLogsToLocalStorage(roomName, messages);
-          break;
-        }
-        case ServerAction.NICK: {
-          myNick = message.message;
-          break;
-        }
+      if (message.type === ServerAction.NICK) {
+        myNick = message.message;
+        return;
       }
+
+      messages.push(message);
+      saveLogsToLocalStorage(roomName, messages);
     };
 
     function joinRoom() {
@@ -58,7 +55,7 @@
 
     function loadPrevMessages() {
       const messagesCopy = { ...messages };
-      messages = JSON.parse(localStorage.getItem(roomName) ?? "");
+      messages = JSON.parse(localStorage.getItem(roomName) ?? "[]");
       messages.concat(messagesCopy);
     }
   });
@@ -100,7 +97,11 @@
   <div class="chat-container">
     <div class="chat-log">
       {#each messages as message}
-        <Message {message} username={myNick} />
+        {#if message.type === ServerAction.MESSAGE}
+          <Message {message} username={myNick} />
+        {:else}
+          <ServerMessage {message} />
+        {/if}
       {/each}
     </div>
 

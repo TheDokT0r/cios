@@ -2,7 +2,15 @@ import { UserAction, type UserMessage } from "shared";
 import { writable } from "svelte/store";
 
 export const connected = writable(false);
-export const ws = new WebSocket(`ws://${import.meta.env.VITE_BACKEND_URL}`);
+
+let backendUrl = window.location.host + "/ws";
+if (import.meta.env.MODE === "development") {
+  backendUrl = import.meta.env.VITE_BACKEND_URL;
+}
+
+export const ws = new WebSocket(`ws://${backendUrl}`);
+if (import.meta.env.DEV) {
+}
 
 ws.addEventListener("open", () => {
   connected.set(true);

@@ -9,7 +9,7 @@
 </script>
 
 <div class="top-app-bar">
-  <div class="top-app-bar-title">Chatroom</div>
+  <h1 class="top-app-bar-title">Chatroom</h1>
   <div class="spacer"></div>
   <button class="icon-button" onclick={onGitHubButtonClick}>
     <GitHubIcon />
@@ -30,6 +30,7 @@
   .top-app-bar-title {
     font-size: 1.25rem;
     font-weight: 500;
+    user-select: none;
   }
 
   .spacer {
