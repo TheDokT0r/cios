@@ -12,7 +12,7 @@
 
 <div class="message-container">
   <p class="message">
-    <b style={`color: ${username === message.username ? "rgb(255, 107, 107)" : "black"}`}>
+    <b style={`color: ${username === message.username ? "rgb(255, 107, 107)" : "white"}`}>
       {message.username}:
     </b>
 
