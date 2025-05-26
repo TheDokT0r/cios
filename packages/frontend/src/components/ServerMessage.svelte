@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { PostMessage } from "shared";
-  import { format } from "date-fns";
+  import { ServerAction, type PostMessage } from "shared";
+  // import { format } from "date-fns";
 
   interface Props {
     message: PostMessage;
@@ -10,13 +10,21 @@
 </script>
 
 <div class="message-container">
-  <p class="message">
-    {message.message}
-  </p>
+  {#if message.type === ServerAction.USER_JOINED}
+    <p>
+      <span class="username">{message.username}</span> Has joined the chat
+    </p>
+  {:else if message.type === ServerAction.USER_LEFT}
+    <p>
+      <span class="username">{message.username}</span> Has left the chat
+    </p>
+  {:else}
+    <p class="message">{message.message}</p>
+  {/if}
 
-  <div class="timestamp">
-    <p>{format(message.date, "dd/MM/yyyy hh:mm")}</p>
-  </div>
+  <!-- <div class="timestamp"> -->
+  <!-- <p>{format(message.date, "dd/MM/yyyy hh:mm")}</p> -->
+  <!-- </div> -->
 </div>
 
 <style lang="scss">
@@ -34,9 +42,13 @@
     flex: 1;
   }
 
-  .timestamp {
-    margin-left: auto;
-    font-size: 0.875rem;
-    color: #c7bcbc;
+  // .timestamp {
+  //   margin-left: auto;
+  //   font-size: 0.875rem;
+  //   color: #c7bcbc;
+  // }
+
+  .username {
+    color: #ce3e3e;
   }
 </style>

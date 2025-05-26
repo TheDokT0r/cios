@@ -64,7 +64,9 @@
   <div>Loading...</div>
 {:else}
   <div class="home-container">
-    <h1>Welcome to chatroom</h1>
+    <h1>Welcome to CiosChat</h1>
+    <h2>A place where you can explore random rooms with random people</h2>
+    <h3>Just write a random room name and see who waits for you on the other side!</h3>
     <form onsubmit={(e) => onEnterClick(e)}>
       <input bind:value={roomId} type="text" placeholder="Room ID" />
       <button>
@@ -91,6 +93,10 @@
     h1 {
       font-size: 3rem;
       text-align: center;
+    }
+
+    h1, h2, h3 {
+      margin-top: -1rem;
     }
 
     form {

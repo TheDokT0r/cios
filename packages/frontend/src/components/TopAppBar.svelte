@@ -9,7 +9,7 @@
 </script>
 
 <div class="top-app-bar">
-  <h1 class="top-app-bar-title">Chatroom</h1>
+  <a href="/" class="top-app-bar-title">CiosChat</a>
   <div class="spacer"></div>
   <button class="icon-button" onclick={onGitHubButtonClick}>
     <GitHubIcon />
@@ -31,6 +31,13 @@
     font-size: 1.25rem;
     font-weight: 500;
     user-select: none;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+      background-color: lighten(white, 10%);
+      text-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
   }
 
   .spacer {

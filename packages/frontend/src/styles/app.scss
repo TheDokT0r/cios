@@ -1,9 +1,10 @@
-@import "vars.scss";
+@use "sass:color";
+@use "vars.scss";
 
 html body {
   font-family: "Rubik";
-  background-color: $back-color;
-  color: $for-color;
+  background-color: vars.$back-color;
+  color: vars.$for-color;
   overflow: hidden;
 
   input,
@@ -13,25 +14,25 @@ html body {
     font-size: 1rem;
     border-radius: 12px;
     border: 1px solid #3a3a3a;
-    background-color: darken($back-color, 5%);
-    color: $for-color;
+    background-color: color.adjust(vars.$back-color, $lightness: -5%);
+    color: vars.$for-color;
     transition: border 0.3s ease, box-shadow 0.3s ease;
 
     &::placeholder {
-      color: lighten($for-color, 30%);
+      color: color.adjust(vars.$for-color, $lightness: 30%);
       opacity: 0.7;
     }
 
     &:focus {
       outline: none;
-      border-color: lighten($for-color, 15%);
+      border-color: color.adjust(vars.$for-color, $lightness: 15%);
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
     }
   }
 
   div,
   form {
-    background-color: $back-color !important;
+    background-color: vars.$back-color !important;
   }
 
   button {
@@ -39,8 +40,8 @@ html body {
     font-size: 1rem;
     border: none;
     border-radius: 12px;
-    background-color: $for-color;
-    color: $back-color;
+    background-color: vars.$for-color;
+    color: vars.$back-color;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease,
@@ -55,7 +56,7 @@ html body {
     transition: background-color 0.2s ease;
 
     &:hover {
-      background-color: lighten($for-color, 10%);
+      background-color: color.adjust(vars.$for-color, $lightness: 10%);
       box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
     }
 
@@ -72,8 +73,8 @@ html body {
 
 button.outline {
   background-color: transparent;
-  border: 2px solid $for-color;
-  color: $for-color;
+  border: 2px solid vars.$for-color;
+  color: vars.$for-color;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -82,7 +83,7 @@ button.outline {
 
 button.ghost {
   background-color: transparent;
-  color: $for-color;
+  color: vars.$for-color;
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -94,7 +95,7 @@ button.danger {
   color: white;
 
   &:hover {
-    background-color: lighten(#e74c3c, 10%);
+    background-color: color.adjust(#e74c3c, $lightness: 10%);
   }
 }
 

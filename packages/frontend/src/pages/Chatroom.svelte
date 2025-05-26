@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
   import { remindNick, ws } from "../libs/socket";
   import {
     ServerAction,
@@ -21,6 +21,7 @@
   let userInput = $state("");
   let roomName = $state("");
   let loading = $state(true);
+  let chatLog: HTMLDivElement | null = $state(null);
 
   onMount(() => {
     loading = true;
@@ -36,6 +37,10 @@
       if (message.type === ServerAction.NICK) {
         myNick = message.message;
         return;
+      }
+
+      if(message.type === ServerAction.MESSAGE && message.username === myNick) {
+        scrollToBottom();
       }
 
       messages.push(message);
@@ -57,6 +62,7 @@
       const messagesCopy = { ...messages };
       messages = JSON.parse(localStorage.getItem(roomName) ?? "[]");
       messages.concat(messagesCopy);
+      scrollToBottom();
     }
   });
 
@@ -89,13 +95,19 @@
       onSendClick(e as unknown as SubmitEvent); // Just reuse your existing send logic
     }
   }
+
+  function scrollToBottom() {
+    if (chatLog) {
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+  }
 </script>
 
 {#if loading}
   <LoadingPage />
 {:else}
   <div class="chat-container">
-    <div class="chat-log">
+    <div class="chat-log" bind:this={chatLog}>
       {#each messages as message}
         {#if message.type === ServerAction.MESSAGE}
           <Message {message} username={myNick} />

@@ -57,6 +57,14 @@ wss.on("connection", (ws, req) => {
         if (isRoomNameValid(data) === "ok") {
           addMemberToRoom(data, ws);
         }
+
+        const username = getUsername(userIp);
+        sendMessageToAllPeopleInRoom(data, {
+          type: ServerAction.USER_JOINED,
+          message: "",
+          date: new Date(),
+          username: username,
+        });
         break;
       }
       case UserAction.MESSAGE: {
@@ -64,27 +72,27 @@ wss.on("connection", (ws, req) => {
         if (room) {
           sendMessageToAllPeopleInRoom(room.id, {
             type: ServerAction.MESSAGE,
-            message: data,
+            message: `${getUsername(userIp)} has joined the chat`,
             date: new Date(),
             username: getUsername(userIp),
           });
         }
         break;
       }
-      case UserAction.LEAVE: {
-        const room = findUserRoom(ws);
-        if (room) {
-          const username = getUsername(userIp);
-          const message = `${username} has left the chat`;
-          sendMessageToAllPeopleInRoom(room.id, {
-            type: ServerAction.USER_LEFT,
-            message,
-            date: new Date(),
-            username: "System",
-          });
-        }
-        break;
-      }
+      // case UserAction.LEAVE: {
+      //   const room = findUserRoom(ws);
+      //   if (room) {
+      //     const username = getUsername(userIp);
+      //     const message = `${username} has left the chat`;
+      //     sendMessageToAllPeopleInRoom(room.id, {
+      //       type: ServerAction.USER_LEFT,
+      //       message,
+      //       date: new Date(),
+      //       username: username,
+      //     });
+      //   }
+      //   break;
+      // }
 
       case UserAction.RENAME: {
         const newNick = regenerateUsername(userIp);
@@ -111,6 +119,19 @@ wss.on("connection", (ws, req) => {
         break;
       }
     }
+
+    ws.on("close", () => {
+      const roomId = findUserRoom(ws);
+      const username = getUsername(userIp);
+
+      if (!roomId) return;
+      sendMessageToAllPeopleInRoom(roomId.id, {
+        type: ServerAction.USER_LEFT,
+        message: `${username} has left the chat`,
+        username,
+        date: new Date(),
+      });
+    });
   });
 });
 
