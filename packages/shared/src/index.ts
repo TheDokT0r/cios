@@ -6,6 +6,7 @@ export enum UserAction {
   REMIND_NICK, // Resends to the user his nick
   JOIN_RANDOM,
   CREATE_PRIVATE,
+  JOIN_PRIVATE,
 }
 
 export interface UserMessage {
@@ -23,6 +24,7 @@ export enum ServerAction {
   NICK,
   HISTORY,
   JOIN_RANDOM,
+  REQUIRES_PASSWORD,
 }
 
 /**
@@ -33,6 +35,11 @@ export interface PostMessage {
   message: string;
   date: Date;
   username: string;
+}
+
+export interface PrivateRoomData {
+  id: string;
+  password: string;
 }
 
 export function isRoomNameValid(

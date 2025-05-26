@@ -9,5 +9,8 @@
   ],
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "uuid": "^11.1.0"
+  }
 }

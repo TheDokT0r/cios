@@ -29,7 +29,7 @@
 
 <div class="top-app-bar">
   <a href="/" class="top-app-bar-title">
-    <img src="/public/cios.svg" alt="cios-img" />
+    <img src="/cios.svg" alt="cios-img" />
     CiosChat
   </a>
   {#if getRoomName()}

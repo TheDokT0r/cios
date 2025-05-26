@@ -12,12 +12,12 @@
   import "../styles/app.scss";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import RepeatIcon from "@lucide/svelte/icons/repeat-2";
-  import { User } from "@lucide/svelte";
-  import ServerMessage from "../components/ServerMessage.svelte";
+  import CreatePrivateRoomDialog from "../components/CreatePrivateRoomDialog.svelte";
 
   let roomId = $state("");
   let username = $state("");
   let loading = $state(false);
+  let requiresPassword = $state(false);
 
   onMount(() => {
     const message: UserMessage = {
@@ -39,6 +39,10 @@
       joinRoom(roomId);
     } else if(data.type === ServerAction.ERROR) {
       toast.push(data.message);
+    } else if(data.type === ServerAction.USER_JOINED) {
+      joinRoom(data.message)
+    } else if(data.type === ServerAction.REQUIRES_PASSWORD) {
+      requiresPassword = true;
     }
   };
 
@@ -78,6 +82,8 @@
 {#if loading}
   <div>Loading...</div>
 {:else}
+  <CreatePrivateRoomDialog open={requiresPassword} />
+
   <div class="home-container">
     <h1>Welcome to CiosChat</h1>
     <h2>A place where you can explore random rooms with random people</h2>
@@ -98,7 +104,7 @@
     </div>
 
     <div class="extra-options">
-      <button>Create Private Room</button>
+      <button onclick={() => requiresPassword = !requiresPassword}>Create Private Room</button>
       <button onclick={joinRandomRoom}>Join Random Room</button>
     </div>
   </div>

@@ -1,8 +1,12 @@
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 import { sendInvalidIpError, sendMessageToUser } from "./actions";
 import rooms, {
   addMemberToRoom,
+  createPrivateRoom,
   findUserRoom,
+  getRoom,
+  joinPrivateRoom,
+  removeMemberFromRoom,
   sendMessageToAllPeopleInRoom,
 } from "./rooms";
 import { getUsername, regenerateUsername } from "./users";
@@ -12,6 +16,7 @@ import {
   ServerAction,
   type UserMessage,
   isRoomNameValid,
+  type PrivateRoomData,
 } from "shared";
 
 declare module "bun" {
@@ -54,17 +59,20 @@ wss.on("connection", (ws, req) => {
     const { action, data }: UserMessage = JSON.parse(msg.toString());
     switch (action) {
       case UserAction.JOIN: {
+        const room = getRoom(data);
         if (isRoomNameValid(data) === "ok") {
-          addMemberToRoom(data, ws);
-        }
+          if (room && room.password) {
+            const message: PostMessage = {
+              type: ServerAction.REQUIRES_PASSWORD,
+              message: "This room is private and requires a password",
+              date: new Date(),
+              username: "System",
+            };
 
-        const username = getUsername(userIp);
-        sendMessageToAllPeopleInRoom(data, {
-          type: ServerAction.USER_JOINED,
-          message: "",
-          date: new Date(),
-          username: username,
-        });
+            return ws.send(JSON.stringify(message));
+          }
+          addMemberToRoom(data, ws, getUsername(userIp));
+        }
         break;
       }
       case UserAction.MESSAGE: {
@@ -120,7 +128,7 @@ wss.on("connection", (ws, req) => {
       }
 
       case UserAction.JOIN_RANDOM: {
-        const publicRooms = [...rooms].filter((room) => !room.isRoomPrivate);
+        const publicRooms = [...rooms].filter((room) => !room.password);
         const randomRoom =
           publicRooms[Math.floor(Math.random() * publicRooms.length)];
         let message: PostMessage;
@@ -143,19 +151,35 @@ wss.on("connection", (ws, req) => {
         ws.send(JSON.stringify(message));
         break;
       }
+
+      case UserAction.CREATE_PRIVATE: {
+        return createPrivateRoom(ws, getUsername(userIp), data);
+      }
+
+      case UserAction.JOIN_PRIVATE: {
+        const roomData: PrivateRoomData = JSON.parse(data) ?? "{}";
+        if ("id" in roomData && "password" in roomData) {
+          return joinPrivateRoom(
+            ws,
+            getUsername(userIp),
+            roomData.id,
+            roomData.password
+          );
+        }
+
+        const errorMessage: PostMessage = {
+          type: ServerAction.ERROR,
+          message: "Invalid message structure",
+          date: new Date(),
+          username: "System",
+        };
+
+        ws.send(JSON.stringify(errorMessage));
+      }
     }
 
     ws.on("close", () => {
-      const roomId = findUserRoom(ws);
-      const username = getUsername(userIp);
-
-      if (!roomId) return;
-      sendMessageToAllPeopleInRoom(roomId.id, {
-        type: ServerAction.USER_LEFT,
-        message: `${username} has left the chat`,
-        username,
-        date: new Date(),
-      });
+      removeMemberFromRoom(ws, getUsername(userIp));
     });
   });
 });
