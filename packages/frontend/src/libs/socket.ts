@@ -28,3 +28,9 @@ export function remindNick() {
 
   ws.send(JSON.stringify(message));
 }
+
+export function joinRoom(roomId: string) {
+  const link = document.createElement("a");
+  link.href = `/channel/c=${roomId}`;
+  link.click();
+}

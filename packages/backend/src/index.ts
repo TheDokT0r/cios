@@ -118,6 +118,31 @@ wss.on("connection", (ws, req) => {
         ws.send(JSON.stringify(message));
         break;
       }
+
+      case UserAction.JOIN_RANDOM: {
+        const publicRooms = [...rooms].filter((room) => !room.isRoomPrivate);
+        const randomRoom =
+          publicRooms[Math.floor(Math.random() * publicRooms.length)];
+        let message: PostMessage;
+        if (!randomRoom) {
+          message = {
+            type: ServerAction.ERROR,
+            message: "No public rooms available. Feel free to create your own!",
+            username: "System",
+            date: new Date(),
+          };
+        } else {
+          message = {
+            type: ServerAction.JOIN_RANDOM,
+            message: randomRoom.id,
+            username: "System",
+            date: new Date(),
+          };
+        }
+
+        ws.send(JSON.stringify(message));
+        break;
+      }
     }
 
     ws.on("close", () => {

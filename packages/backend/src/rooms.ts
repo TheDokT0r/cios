@@ -4,6 +4,7 @@ import type { PostMessage } from "shared";
 export interface ChatRoom {
   id: string;
   members: Set<WebSocket>;
+  isRoomPrivate?: boolean
 }
 
 const rooms = new Set<ChatRoom>();

@@ -8,10 +8,12 @@
     type PostMessage,
     type UserMessage,
   } from "shared";
-  import { ws } from "../libs/socket";
+  import { joinRoom, ws } from "../libs/socket";
   import "../styles/app.scss";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import RepeatIcon from "@lucide/svelte/icons/repeat-2";
+  import { User } from "@lucide/svelte";
+  import ServerMessage from "../components/ServerMessage.svelte";
 
   let roomId = $state("");
   let username = $state("");
@@ -32,6 +34,11 @@
       loading = true;
       username = data.message;
       loading = false;
+    } else if(data.type === ServerAction.JOIN_RANDOM) {
+      const roomId = data.message;
+      joinRoom(roomId);
+    } else if(data.type === ServerAction.ERROR) {
+      toast.push(data.message);
     }
   };
 
@@ -44,10 +51,7 @@
     } else if (valid === "white spaces") {
       return toast.push("Room ID can't have any white spaces in it");
     }
-
-    const link = document.createElement("a");
-    link.href = `/channel/c=${roomId}`;
-    link.click();
+    joinRoom(roomId);
   }
 
   function onRegenerateUsernameClick(e: MouseEvent) {
@@ -58,6 +62,17 @@
     };
     ws.send(JSON.stringify(message));
   }
+
+  function joinRandomRoom(e: MouseEvent) {
+    e.preventDefault();
+
+    const message: UserMessage = {
+      action: UserAction.JOIN_RANDOM,
+      data: "",
+    };
+
+    ws.send(JSON.stringify(message));
+  }
 </script>
 
 {#if loading}
@@ -66,7 +81,9 @@
   <div class="home-container">
     <h1>Welcome to CiosChat</h1>
     <h2>A place where you can explore random rooms with random people</h2>
-    <h3>Just write a random room name and see who waits for you on the other side!</h3>
+    <h3>
+      Just write a random room name and see who waits for you on the other side!
+    </h3>
     <form onsubmit={(e) => onEnterClick(e)}>
       <input bind:value={roomId} type="text" placeholder="Room ID" />
       <button>
@@ -78,6 +95,11 @@
       <button onclick={onRegenerateUsernameClick}>
         <RepeatIcon scale="5rem" />
       </button>
+    </div>
+
+    <div class="extra-options">
+      <button>Create Private Room</button>
+      <button onclick={joinRandomRoom}>Join Random Room</button>
     </div>
   </div>
 {/if}
@@ -95,7 +117,9 @@
       text-align: center;
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       margin-top: -1rem;
     }
 
@@ -121,6 +145,15 @@
 
       span {
         color: rgb(255, 107, 107);
+      }
+    }
+
+    .extra-options {
+      margin-top: 40px;
+      display: flex;
+      button {
+        border-radius: 10px;
+        margin-right: 10px;
       }
     }
   }
