@@ -28,6 +28,7 @@
     joinRoom();
     loadPrevMessages();
     remindNick();
+    document.title = `CiosChat: ${roomName}`;
     loading = false;
 
     ws.onmessage = (ev) => {
@@ -39,7 +40,10 @@
         return;
       }
 
-      if(message.type === ServerAction.MESSAGE && message.username === myNick) {
+      if (
+        message.type === ServerAction.MESSAGE &&
+        message.username === myNick
+      ) {
         scrollToBottom();
       }
 
