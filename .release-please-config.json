@@ -1,7 +1,0 @@
-{
-  "release-type": "simple",
-  "tag-prefix": "v",
-  "changelog-path": "CHANGELOG.md",
-  "extra-files": [],
-  "pull-request-title-pattern": "chore(release): 🚀 release ${version}"
-}

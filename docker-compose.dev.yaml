@@ -11,13 +11,15 @@ services:
       - backend
 
   frontend:
-    image: ghcr.io/thedokt0r/chatroom-frontend:latest
-    container_name: chatroom-frontend
-    ports:
-      - 80
+    image: chatroom-frontend
+    build:
+      context: .
+      dockerfile: .docker/dockerfile.frontend
 
   backend:
-    image: ghcr.io/thedokt0r/chatroom-backend:latest
-    container_name: chatroom-backend
-    ports:
-      - 80
+    image: chatroom-backend
+    build:
+      context: .
+      dockerfile: .docker/dockerfile.backend
+    environment:
+      - PORT=80
