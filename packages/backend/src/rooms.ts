@@ -1,9 +1,11 @@
 import WebSocket from "ws";
-import type { PostMessage } from "shared";
+import { ServerAction, type PostMessage } from "shared";
+import { getUsername } from "./users";
 
 export interface ChatRoom {
   id: string;
   members: Set<WebSocket>;
+  hashedPass?: string;
 }
 
 const rooms = new Set<ChatRoom>();
@@ -11,7 +13,7 @@ const rooms = new Set<ChatRoom>();
 // New map: WebSocket -> Room ID
 const userRoomMap = new Map<WebSocket, string>();
 
-export function addMemberToRoom(roomId: string, ws: WebSocket) {
+export function addMemberToRoom(roomId: string, ws: WebSocket, userIp: string) {
   let room = [...rooms].find((room) => room.id === roomId);
   if (!room) {
     room = {
@@ -23,17 +25,31 @@ export function addMemberToRoom(roomId: string, ws: WebSocket) {
 
   room.members.add(ws);
   userRoomMap.set(ws, roomId); // Track the user's room
+
+  sendMessageToAllPeopleInRoom(roomId, {
+    type: ServerAction.USER_JOINED,
+    message: roomId,
+    date: new Date(),
+    username: getUsername(userIp),
+  });
 }
 
-export function removeMemberFromRoom(ws: WebSocket) {
-  const roomId = userRoomMap.get(ws);
-  if (!roomId) return;
+export function removeMemberFromRoom(ws: WebSocket, username: string) {
+  const userRoom = findUserRoom(ws);
+  if (!userRoom) return;
 
-  const room = [...rooms].find((r) => r.id === roomId);
+  const room = [...rooms].find((r) => r.id === userRoom.id);
   if (!room) return;
 
   room.members.delete(ws);
   userRoomMap.delete(ws);
+
+  sendMessageToAllPeopleInRoom(userRoom.id, {
+    type: ServerAction.USER_LEFT,
+    message: "",
+    username,
+    date: new Date(),
+  });
 
   // Optionally delete the room if empty
   if (room.members.size === 0) {
