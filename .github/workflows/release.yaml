@@ -32,39 +32,27 @@ jobs:
           fi
 
   versioning:
+    needs: check_skip_release
+    if: needs.check_skip_release.outputs.should_skip == 'false'
     runs-on: ubuntu-latest
-    needs: [check_skip_release] # Depend on the skip check
-    if: github.event_name != 'pull_request' && needs.check_skip_release.outputs.should_skip == 'false' # Only run if not a PR AND not skipped
     steps:
       - uses: actions/checkout@v4
       - name: Bump version and push tag
+        if: github.event_name != 'pull_request'
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # You might want to explicitly set a pattern here if `github-tag-action`
-          # doesn't automatically skip for your chosen keywords.
-          # For example: with: commit_pattern: '^(feat|fix|perf|refactor|build|ci|docs|style|test|chore)(\(.+\))?: (.+)|^(revert|Merge pull request)'
-          # If your skip keywords are already handled by default, this is not needed.
-
       - name: Create a GitHub release
+        if: github.event_name != 'pull_request'
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
 
-      - name: Set version output
-        run: |
-          VERSION="${{ steps.tag_version.outputs.new_version }}"
-          if [ -z "$VERSION" ]; then
-            VERSION="1.0.0"
-          fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-        id: set_version
-
     outputs:
-      version: ${{ steps.set_version.outputs.version }}
+      version: ${{ steps.tag_version.outputs.new_version || '1.0.0'}}
 
   repo-owner-name:
     runs-on: ubuntu-latest
@@ -129,12 +117,12 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          # The push condition has been simplified to only push if the workflow is not skipped.
-          # The main push trigger in the 'on' block handles when the workflow runs.
-          push: true
-          tags: ${{ steps.meta.outputs.tags }} # Corrected: Use metadata-action's output
+          push: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged) }} # Push only on direct push or merged PR
+          tags: |
+            ghcr.io/${{ needs.repo-owner-name.outputs.lowercase }}/${{ matrix.image }}:${{ needs.versioning.outputs.version }}
+            ghcr.io/${{ needs.repo-owner-name.outputs.lowercase }}/${{ matrix.image }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build-args }}
-          load: false # Changed: No need to load if only pushing
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
