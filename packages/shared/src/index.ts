@@ -4,6 +4,7 @@ export enum UserAction {
   MESSAGE,
   RENAME,
   REMIND_NICK, // Resends to the user his nick
+  JOIN_RANDOM,
 }
 
 export interface UserMessage {
@@ -20,6 +21,7 @@ export enum ServerAction {
   USER_LEFT,
   NICK,
   HISTORY,
+  JOIN_RANDOM
 }
 
 /**

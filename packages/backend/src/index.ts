@@ -1,8 +1,9 @@
 import { WebSocketServer, WebSocket } from "ws";
-import { sendInvalidIpError, sendMessageToUser } from "./actions";
+import { sendInvalidIpError, sendMessageToUser, sendSystemMessage } from "./actions";
 import rooms, {
   addMemberToRoom,
   findUserRoom,
+  removeMemberFromRoom,
   sendMessageToAllPeopleInRoom,
 } from "./rooms";
 import { getUsername, regenerateUsername } from "./users";
@@ -54,18 +55,12 @@ wss.on("connection", (ws, req) => {
     const { action, data }: UserMessage = JSON.parse(msg.toString());
     switch (action) {
       case UserAction.JOIN: {
-        if (isRoomNameValid(data) === "ok") {
-          addMemberToRoom(data, ws);
+        const isValid = isRoomNameValid(data)
+        if (isValid !== "ok") {
+          return sendSystemMessage(ws, ServerAction.ERROR, `Invalid room ID format: ${isValid}`);
         }
 
-        const username = getUsername(userIp);
-        sendMessageToAllPeopleInRoom(data, {
-          type: ServerAction.USER_JOINED,
-          message: "",
-          date: new Date(),
-          username: username,
-        });
-        break;
+        return addMemberToRoom(data, ws, userIp);
       }
       case UserAction.MESSAGE: {
         const room = findUserRoom(ws);
@@ -79,20 +74,6 @@ wss.on("connection", (ws, req) => {
         }
         break;
       }
-      // case UserAction.LEAVE: {
-      //   const room = findUserRoom(ws);
-      //   if (room) {
-      //     const username = getUsername(userIp);
-      //     const message = `${username} has left the chat`;
-      //     sendMessageToAllPeopleInRoom(room.id, {
-      //       type: ServerAction.USER_LEFT,
-      //       message,
-      //       date: new Date(),
-      //       username: username,
-      //     });
-      //   }
-      //   break;
-      // }
 
       case UserAction.RENAME: {
         const newNick = regenerateUsername(userIp);
@@ -118,19 +99,20 @@ wss.on("connection", (ws, req) => {
         ws.send(JSON.stringify(message));
         break;
       }
+
+      case UserAction.JOIN_RANDOM: {
+        const publicRooms = [...rooms].filter((room) => !room.hashedPass || room.hashedPass.length === 0);
+        if (!publicRooms || publicRooms.length === 0) {
+          return sendSystemMessage(ws, ServerAction.ERROR, "No public rooms were found");
+        }
+
+        const room = publicRooms[Math.floor(Math.random() * publicRooms.length)];
+        return addMemberToRoom(room!.id, ws, userIp);
+      }
     }
 
     ws.on("close", () => {
-      const roomId = findUserRoom(ws);
-      const username = getUsername(userIp);
-
-      if (!roomId) return;
-      sendMessageToAllPeopleInRoom(roomId.id, {
-        type: ServerAction.USER_LEFT,
-        message: `${username} has left the chat`,
-        username,
-        date: new Date(),
-      });
+      removeMemberFromRoom(ws, getUsername(userIp));
     });
   });
 });

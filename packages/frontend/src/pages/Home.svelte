@@ -12,6 +12,7 @@
   import "../styles/app.scss";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import RepeatIcon from "@lucide/svelte/icons/repeat-2";
+  import DicesIcon from '@lucide/svelte/icons/dices';
 
   let roomId = $state("");
   let username = $state("");
@@ -28,10 +29,23 @@
 
   ws.onmessage = (ev) => {
     const data = JSON.parse(ev.data) as PostMessage;
-    if (data.type === ServerAction.NICK) {
-      loading = true;
-      username = data.message;
-      loading = false;
+    switch(data.type) {
+      case ServerAction.ERROR: {
+        toast.push(data.message);
+      }
+
+      case ServerAction.NICK: {
+        loading = true;
+        username = data.message;
+        loading = false;
+        break;
+      }
+
+      case ServerAction.USER_JOINED: {
+        const link = document.createElement("a");
+        link.href = `/channel/c=${data.message}`;
+        link.click();
+      }
     }
   };
 
@@ -58,6 +72,15 @@
     };
     ws.send(JSON.stringify(message));
   }
+
+  function joinRandomRoom(e: MouseEvent) {
+    e.preventDefault();
+    const message: UserMessage = {
+      action: UserAction.JOIN_RANDOM,
+      data: ""
+    };
+    ws.send(JSON.stringify(message));
+  }
 </script>
 
 {#if loading}
@@ -73,6 +96,12 @@
         <SendHorizontalIcon />
       </button>
     </form>
+    <div class="extra-options-section">
+        <button onclick={joinRandomRoom}>
+            <DicesIcon />
+        </button>
+    </div>
+
     <div class="username-container">
       <p>Your username is: <span>{username}</span></p>
       <button onclick={onRegenerateUsernameClick}>
@@ -123,5 +152,10 @@
         color: rgb(255, 107, 107);
       }
     }
+  }
+
+  .extra-options-section {
+      margin-top: 1rem;
+      display: flex;
   }
 </style>
