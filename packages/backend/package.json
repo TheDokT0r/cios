@@ -7,6 +7,7 @@
     "dev": "bun --watch run src/index.ts"
   },
   "dependencies": {
+    "uuid": "^11.1.0",
     "ws": "^8.18.2"
   },
   "devDependencies": {
