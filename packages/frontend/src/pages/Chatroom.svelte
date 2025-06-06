@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, tick } from "svelte";
-  import { remindNick, ws } from "../libs/socket";
+  import { formatIncomingMessage, remindNick, ws } from "../libs/socket";
   import {
     ServerAction,
     UserAction,
@@ -11,7 +11,6 @@
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import LoadingPage from "../components/LoadingPage.svelte";
   import {
-    loadLogsFromLocalStorage,
     saveLogsToLocalStorage,
   } from "../libs/messagesInStorage";
   import ServerMessage from "../components/ServerMessage.svelte";
@@ -31,9 +30,8 @@
     document.title = `CiosChat: ${roomName}`;
     loading = false;
 
-    ws.onmessage = (ev) => {
-      const message: PostMessage = JSON.parse(ev.data);
-      if (!("type" in message)) return;
+    ws.addEventListener("message", (ev) => {
+      const message = formatIncomingMessage(ev.data);
 
       if (message.type === ServerAction.NICK) {
         myNick = message.message;
@@ -49,7 +47,7 @@
 
       messages.push(message);
       saveLogsToLocalStorage(roomName, messages);
-    };
+    });
 
     function joinRoom() {
       const urlVars = document.URL.toLocaleLowerCase().split("/channel/c=");

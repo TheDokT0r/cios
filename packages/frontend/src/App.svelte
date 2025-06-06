@@ -7,6 +7,7 @@
   import "@fontsource/rubik";
   import TopAppBar from "./components/TopAppBar.svelte";
   import LoadingPage from "./components/LoadingPage.svelte";
+  import PrivateRoomCreationPage from "./pages/PrivateRoomCreationPage.svelte";
 
   let isConnected = $state(false);
   connected.subscribe((value) => {
@@ -22,7 +23,10 @@
     return urlParams[urlParams.length - 1];
   }
 
-  onMount(() => {});
+  const isCreatingPrivateRoom = () =>
+    getRoomId() === false &&
+    document.URL.toLowerCase().includes("/create-private");
+
 </script>
 
 <main>
@@ -30,12 +34,14 @@
   <TopAppBar />
 
   {#if isConnected}
-    {#if getRoomId() === false}
-      <Home />
-    {:else}
+    {#if getRoomId() !== false}
       <Chatroom />
+    {:else if isCreatingPrivateRoom()}
+      <PrivateRoomCreationPage />
+    {:else}
+      <Home />
     {/if}
   {:else}
-  <LoadingPage />
+    <LoadingPage />
   {/if}
 </main>
