@@ -32,6 +32,7 @@
     switch(data.type) {
       case ServerAction.ERROR: {
         toast.push(data.message);
+        break;
       }
 
       case ServerAction.NICK: {
