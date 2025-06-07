@@ -8,7 +8,11 @@
     type PostMessage,
     type UserMessage,
   } from "shared";
-  import { formatIncomingMessage, ws } from "../libs/socket";
+  import {
+    formatIncomingMessage,
+    generateNewUserMessage,
+    ws,
+  } from "../libs/socket";
   import "../styles/app.scss";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import DicesIcon from "@lucide/svelte/icons/dices";
@@ -31,20 +35,17 @@
 
   ws.addEventListener("message", (ev) => {
     const data = formatIncomingMessage(ev.data);
-    
     switch (data.type) {
       case ServerAction.ERROR: {
+        if (data.message === "requires password") {
+          return toast.push("Room requires password");
+        }
         toast.push(data.message);
         break;
       }
 
       case ServerAction.NICK: {
         username = data.message;
-        break;
-      }
-
-      case ServerAction.USER_JOINED: {
-        redirectToURL(`/channel/c=${data.message}`);
         break;
       }
     }
@@ -62,8 +63,6 @@
 
     redirectToURL(`/channel/c=${roomId}`);
   }
-
-
 
   function joinRandomRoom(e: MouseEvent) {
     e.preventDefault();

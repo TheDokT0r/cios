@@ -5,7 +5,7 @@ export enum UserAction {
   RENAME,
   REMIND_NICK, // Resends to the user his nick
   JOIN_RANDOM,
-  CREATE_PRIVATE
+  CREATE_PRIVATE,
 }
 
 export interface UserMessage {
@@ -23,7 +23,16 @@ export enum ServerAction {
   NICK,
   HISTORY,
   JOIN_RANDOM,
-  CREATE_PRIVATE
+  CREATE_PRIVATE,
+}
+
+export enum ErrorCodes {
+  REQUIRES_PASSWORD = "requires password",
+  INVALID_PASSWORD = "invalid password",
+  NO_PUBLIC_ROOMS = "no public rooms",
+  INVALID_ROOM_ID_FORMAT = "invalid room id format",
+  INVALID_IP = "invalid ip",
+  INVALID_MESSAGE_TYPE = "invalid message types",
 }
 
 /**
@@ -31,7 +40,7 @@ export enum ServerAction {
  */
 export interface PostMessage {
   type: ServerAction;
-  message: string;
+  message: string | ErrorCodes;
   date: Date;
   username: string;
 }

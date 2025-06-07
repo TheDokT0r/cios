@@ -1,21 +1,23 @@
 <script lang="ts">
   import UsernameGenerator from "../components/UsernameGenerator.svelte";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
-  import { ws } from "../libs/socket";
-  import { UserAction, type UserMessage } from "shared";
+  import { formatIncomingMessage, generateNewUserMessage, ws } from "../libs/socket";
+  import { ServerAction, UserAction, type UserMessage } from "shared";
+  import redirectToURL from "../libs/redirect";
   let username = $state("");
   let password = $state("");
 
   function createPrivateRoom(e: SubmitEvent) {
     e.preventDefault();
-
-    const message: UserMessage = {
-      action: UserAction.CREATE_PRIVATE,
-      data: password,
-    };
-
-    ws.send(JSON.stringify(message));
+    generateNewUserMessage(UserAction.CREATE_PRIVATE, password);
   }
+
+  ws.addEventListener("message", (ev) => {
+    const {message, type} = formatIncomingMessage(ev.data);
+    if(type === ServerAction.USER_JOINED) {
+      redirectToURL(`/channel/c=${message}`);
+    }
+  })
 </script>
 
 <div>
