@@ -1,13 +1,16 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
   import Home from "./pages/Home.svelte";
   import Chatroom from "./pages/Chatroom.svelte";
   import { SvelteToast } from "@zerodevx/svelte-toast";
-  import { connected } from "./libs/socket";
+  import { connected, formatIncomingMessage, ws } from "./libs/socket";
   import "@fontsource/rubik";
   import TopAppBar from "./components/TopAppBar.svelte";
   import LoadingPage from "./components/LoadingPage.svelte";
   import PrivateRoomCreationPage from "./pages/PrivateRoomCreationPage.svelte";
+  import { ServerAction, ErrorCodes } from "shared";
+  import ServerMessage from "./components/ServerMessage.svelte";
+  import errorHandler from "./libs/errorsHandler";
 
   let isConnected = $state(false);
   connected.subscribe((value) => {
@@ -27,6 +30,12 @@
     getRoomId() === false &&
     document.URL.toLowerCase().includes("/create-private");
 
+  ws.addEventListener("message", (ev) => {
+    const { type, message } = formatIncomingMessage(ev.data);
+    if (type === ServerAction.ERROR || type === ServerAction.ROOM_ERROR) {
+      errorHandler(message as ErrorCodes);
+    }
+  });
 </script>
 
 <main>

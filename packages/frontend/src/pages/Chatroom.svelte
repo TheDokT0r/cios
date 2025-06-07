@@ -26,6 +26,7 @@
   let roomId = $state("");
   let loading = $state(true);
   let chatLog: HTMLDivElement | null = $state(null);
+  let requiresPassword = $state(false);
 
   onMount(() => {
     loading = true;
@@ -38,12 +39,10 @@
     ws.addEventListener("message", (ev) => {
       const message = formatIncomingMessage(ev.data);
 
-      if (
-        message.type === ServerAction.ERROR &&
-        message.message === ErrorCodes.REQUIRES_PASSWORD
-      ) {
-        toast.push("Room requires password");
+      if(message.type === ServerAction.ERROR && message.message === ErrorCodes.REQUIRES_PASSWORD) {
+        requiresPassword = true;
       }
+        
 
       if (message.type === ServerAction.NICK) {
         myNick = message.message;
@@ -114,6 +113,8 @@
 
 {#if loading}
   <LoadingPage />
+  {:else if requiresPassword}
+  <div>Room requires password</div>
 {:else}
   <div class="chat-container">
     <div class="chat-log" bind:this={chatLog}>
