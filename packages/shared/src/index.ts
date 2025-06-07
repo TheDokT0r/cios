@@ -33,6 +33,7 @@ export enum ErrorCodes {
   INVALID_ROOM_ID_FORMAT = "invalid room id format",
   INVALID_IP = "invalid ip",
   INVALID_MESSAGE_TYPE = "invalid message types",
+  NOT_IN_ROOM = "not in room",
 }
 
 /**

@@ -2,6 +2,7 @@
   import { toast } from "@zerodevx/svelte-toast";
   import { onMount } from "svelte";
   import {
+    ErrorCodes,
     isRoomNameValid,
     ServerAction,
     UserAction,
@@ -19,6 +20,7 @@
   import LockIcon from "@lucide/svelte/icons/lock";
   import redirectToURL from "../libs/redirect";
   import UsernameGenerator from "../components/UsernameGenerator.svelte";
+  import errorHandler from "../libs/errorsHandler";
 
   let roomId = $state("");
   let username = $state("");
@@ -37,11 +39,7 @@
     const data = formatIncomingMessage(ev.data);
     switch (data.type) {
       case ServerAction.ERROR: {
-        if (data.message === "requires password") {
-          return toast.push("Room requires password");
-        }
-        toast.push(data.message);
-        break;
+        return errorHandler(data.message as ErrorCodes);
       }
 
       case ServerAction.NICK: {

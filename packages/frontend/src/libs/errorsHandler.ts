@@ -21,5 +21,8 @@ export default function errorHandler(code: ErrorCodes) {
     case ErrorCodes.REQUIRES_PASSWORD: {
       return toast.push("Room requires password");
     }
+    case ErrorCodes.NOT_IN_ROOM: {
+      return toast.push("You're currently not in a room");
+    }
   }
 }

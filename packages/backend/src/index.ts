@@ -68,7 +68,6 @@ wss.on("connection", (ws, req) => {
         }
 
         const room = getRoomFromId(data);
-        console.log(room?.id, room?.hashedPass);
         if (room && room.hashedPass) {
           return sendSystemMessage(
             ws,
@@ -81,15 +80,20 @@ wss.on("connection", (ws, req) => {
       }
       case UserAction.MESSAGE: {
         const room = findUserRoom(ws);
-        if (room) {
-          sendMessageToAllPeopleInRoom(room.id, {
-            type: ServerAction.MESSAGE,
-            message: `${getUsername(userIp)} has joined the chat`,
-            date: new Date(),
-            username: getUsername(userIp),
-          });
+        if (!room) {
+          return sendSystemMessage(
+            ws,
+            ServerAction.ERROR,
+            ErrorCodes.NOT_IN_ROOM
+          );
         }
-        break;
+
+        return sendMessageToAllPeopleInRoom(room.id, {
+          type: ServerAction.MESSAGE,
+          message: `${getUsername(userIp)} has joined the chat`,
+          date: new Date(),
+          username: getUsername(userIp),
+        });
       }
 
       case UserAction.RENAME: {

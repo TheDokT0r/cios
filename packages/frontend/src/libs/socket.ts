@@ -56,6 +56,10 @@ export function generateNewUserMessage<T>(
     data: JSON.stringify(data),
   };
 
+  if (typeof data === "string") {
+    message.data = data;
+  }
+
   if (sendMessage) {
     return ws.send(JSON.stringify(message));
   }
