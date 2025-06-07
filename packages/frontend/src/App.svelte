@@ -1,41 +1,34 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import Home from "./pages/Home.svelte";
-  import Chatroom from "./pages/Chatroom.svelte";
   import { SvelteToast } from "@zerodevx/svelte-toast";
-  import { connected, formatIncomingMessage, ws } from "./libs/socket";
   import "@fontsource/rubik";
   import TopAppBar from "./components/TopAppBar.svelte";
   import LoadingPage from "./components/LoadingPage.svelte";
-  import PrivateRoomCreationPage from "./pages/PrivateRoomCreationPage.svelte";
-  import { ServerAction, ErrorCodes } from "shared";
-  import ServerMessage from "./components/ServerMessage.svelte";
-  import errorHandler from "./libs/errorsHandler";
+  import { connected } from "./libs/socket";
+  import { type Component } from "svelte";
 
-  let isConnected = $state(false);
+  let isConnected = false;
   connected.subscribe((value) => {
     isConnected = value;
   });
 
-  function getRoomId() {
-    const urlParams = document.URL.toLowerCase().split("/channel/c=");
-    if (urlParams.length <= 1) {
-      return false;
-    }
+  let currentPage: Component | null = null;
 
-    return urlParams[urlParams.length - 1];
+  async function loadPage() {
+    const url = window.location.pathname.toLowerCase();
+    if (url.includes("/channel/c=")) {
+      const mod = await import("./pages/Chatroom.svelte");
+      currentPage = mod.default;
+    } else if (url.includes("/create-private")) {
+      const mod = await import("./pages/PrivateRoomCreationPage.svelte");
+      currentPage = mod.default;
+    } else {
+      const mod = await import("./pages/Home.svelte");
+      currentPage = mod.default;
+    }
   }
 
-  const isCreatingPrivateRoom = () =>
-    getRoomId() === false &&
-    document.URL.toLowerCase().includes("/create-private");
-
-  ws.addEventListener("message", (ev) => {
-    const { type, message } = formatIncomingMessage(ev.data);
-    if (type === ServerAction.ERROR || type === ServerAction.ROOM_ERROR) {
-      errorHandler(message as ErrorCodes);
-    }
-  });
+  onMount(loadPage);
 </script>
 
 <main>
@@ -43,12 +36,10 @@
   <TopAppBar />
 
   {#if isConnected}
-    {#if getRoomId() !== false}
-      <Chatroom />
-    {:else if isCreatingPrivateRoom()}
-      <PrivateRoomCreationPage />
+    {#if currentPage}
+      <svelte:component this={currentPage} />
     {:else}
-      <Home />
+      <LoadingPage />
     {/if}
   {:else}
     <LoadingPage />
