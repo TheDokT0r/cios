@@ -6,7 +6,8 @@ export enum UserAction {
   REMIND_NICK, // Resends to the user his nick
   JOIN_RANDOM,
   CREATE_PRIVATE,
-  JOIN_PRIVATE
+  JOIN_PRIVATE,
+  IS_IN_ROOM
 }
 
 export interface UserMessage {
@@ -25,7 +26,8 @@ export enum ServerAction {
   HISTORY,
   JOIN_RANDOM,
   CREATE_PRIVATE,
-  CORRECT_PASSWORD
+  CORRECT_PASSWORD,
+  IS_IN_ROOM
 }
 
 export enum ErrorCodes {

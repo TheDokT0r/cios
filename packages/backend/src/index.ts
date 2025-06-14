@@ -91,7 +91,7 @@ wss.on("connection", (ws, req) => {
 
         return sendMessageToAllPeopleInRoom(room.id, {
           type: ServerAction.MESSAGE,
-          message: `${getUsername(userIp)} has joined the chat`,
+          message: data,
           date: new Date(),
           username: getUsername(userIp),
         });
@@ -148,7 +148,7 @@ wss.on("connection", (ws, req) => {
         if (!roomId || !password) return;
 
         const room = getRoomFromId(roomId);
-        if(room?.members.has(ws)) {
+        if (room?.members.has(ws)) {
           sendSystemMessage(ws, ServerAction.CORRECT_PASSWORD);
         }
 
@@ -156,6 +156,16 @@ wss.on("connection", (ws, req) => {
           sendSystemMessage(ws, ServerAction.CORRECT_PASSWORD);
           addMemberToRoom(roomId, ws, userIp);
         }
+        break;
+      }
+
+      case UserAction.IS_IN_ROOM: {
+        const room = getRoomFromId(data);
+        if (room && room.members.has(ws)) {
+          return sendSystemMessage(ws, ServerAction.IS_IN_ROOM, "yes");
+        }
+
+        return sendSystemMessage(ws, ServerAction.IS_IN_ROOM, "no");
       }
     }
 

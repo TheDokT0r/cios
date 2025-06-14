@@ -50,7 +50,7 @@
         scrollToBottom();
       }
 
-      if (message.type !== ServerAction.ERROR) {
+      if (message.type !== ServerAction.ERROR && message.type !== ServerAction.IS_IN_ROOM) {
         messages.push(message);
         saveLogsToLocalStorage(roomId, messages);
       }
