@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import {
     formatIncomingMessage,
     generateNewUserMessage,
@@ -50,8 +50,10 @@
         scrollToBottom();
       }
 
-      messages.push(message);
-      saveLogsToLocalStorage(roomId, messages);
+      if (message.type !== ServerAction.ERROR) {
+        messages.push(message);
+        saveLogsToLocalStorage(roomId, messages);
+      }
     });
 
     function joinRoom() {

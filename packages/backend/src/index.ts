@@ -73,7 +73,7 @@ wss.on("connection", (ws, req) => {
           return sendSystemMessage(
             ws,
             ServerAction.ERROR,
-            ErrorCodes.INVALID_PASSWORD
+            ErrorCodes.REQUIRES_PASSWORD
           );
         }
 
@@ -146,6 +146,11 @@ wss.on("connection", (ws, req) => {
       case UserAction.JOIN_PRIVATE: {
         const { roomId, password } = JSON.parse(data);
         if (!roomId || !password) return;
+
+        const room = getRoomFromId(roomId);
+        if(room?.members.has(ws)) {
+          sendSystemMessage(ws, ServerAction.CORRECT_PASSWORD);
+        }
 
         if (isRoomPasswordCorrect(roomId, password)) {
           sendSystemMessage(ws, ServerAction.CORRECT_PASSWORD);
