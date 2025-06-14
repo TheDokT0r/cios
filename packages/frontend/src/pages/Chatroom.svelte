@@ -1,7 +1,13 @@
 <script lang="ts">
-  import { onDestroy, onMount, tick } from "svelte";
-  import { remindNick, ws } from "../libs/socket";
+  import { onDestroy, onMount } from "svelte";
   import {
+    formatIncomingMessage,
+    generateNewUserMessage,
+    remindNick,
+    ws,
+  } from "../libs/socket";
+  import {
+    ErrorCodes,
     ServerAction,
     UserAction,
     type PostMessage,
@@ -10,16 +16,14 @@
   import Message from "../components/Message.svelte";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import LoadingPage from "../components/LoadingPage.svelte";
-  import {
-    loadLogsFromLocalStorage,
-    saveLogsToLocalStorage,
-  } from "../libs/messagesInStorage";
+  import { saveLogsToLocalStorage } from "../libs/messagesInStorage";
   import ServerMessage from "../components/ServerMessage.svelte";
+  import RoomPasswordDialog from "../components/RoomPasswordDialog.svelte";
 
   let messages: PostMessage[] = $state([]);
   let myNick = $state("");
   let userInput = $state("");
-  let roomName = $state("");
+  let roomId = $state("");
   let loading = $state(true);
   let chatLog: HTMLDivElement | null = $state(null);
 
@@ -28,12 +32,11 @@
     joinRoom();
     loadPrevMessages();
     remindNick();
-    document.title = `CiosChat: ${roomName}`;
+    document.title = `CiosChat: ${roomId}`;
     loading = false;
 
-    ws.onmessage = (ev) => {
-      const message: PostMessage = JSON.parse(ev.data);
-      if (!("type" in message)) return;
+    ws.addEventListener("message", (ev) => {
+      const message = formatIncomingMessage(ev.data);
 
       if (message.type === ServerAction.NICK) {
         myNick = message.message;
@@ -47,24 +50,21 @@
         scrollToBottom();
       }
 
-      messages.push(message);
-      saveLogsToLocalStorage(roomName, messages);
-    };
+      if (message.type !== ServerAction.ERROR && message.type !== ServerAction.IS_IN_ROOM) {
+        messages.push(message);
+        saveLogsToLocalStorage(roomId, messages);
+      }
+    });
 
     function joinRoom() {
       const urlVars = document.URL.toLocaleLowerCase().split("/channel/c=");
-      roomName = urlVars[urlVars.length - 1];
-      const joinRoomMessage: UserMessage = {
-        action: UserAction.JOIN,
-        data: roomName,
-      };
-
-      ws.send(JSON.stringify(joinRoomMessage));
+      roomId = urlVars[urlVars.length - 1];
+      generateNewUserMessage(UserAction.JOIN, roomId);
     }
 
     function loadPrevMessages() {
       const messagesCopy = { ...messages };
-      messages = JSON.parse(localStorage.getItem(roomName) ?? "[]");
+      messages = JSON.parse(localStorage.getItem(roomId) ?? "[]");
       messages.concat(messagesCopy);
       scrollToBottom();
     }
@@ -77,7 +77,7 @@
     };
 
     ws.send(JSON.stringify(leaveMessage));
-    saveLogsToLocalStorage(roomName, messages);
+    saveLogsToLocalStorage(roomId, messages);
   });
 
   function onSendClick(e: SubmitEvent) {
@@ -111,6 +111,7 @@
   <LoadingPage />
 {:else}
   <div class="chat-container">
+    <RoomPasswordDialog {roomId} />
     <div class="chat-log" bind:this={chatLog}>
       {#each messages as message}
         {#if message.type === ServerAction.MESSAGE}
@@ -138,7 +139,7 @@
 <style lang="scss">
   .chat-container {
     position: fixed;
-    top: 64px; /* height of your TopAppBar */
+    top: 64px;
     left: 0;
     right: 0;
     bottom: 0;

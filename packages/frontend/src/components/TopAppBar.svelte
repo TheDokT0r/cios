@@ -2,11 +2,11 @@
   import GitHubIcon from "@lucide/svelte/icons/github";
   import CopyIcon from "@lucide/svelte/icons/copy";
   import { toast } from "@zerodevx/svelte-toast";
+  import redirectToURL from "../libs/redirect";
+  import AppIcon from '../assets/cios.svg';
 
   function onGitHubButtonClick() {
-    const a = document.createElement("a");
-    a.href = "https://github.com/TheDokT0r/chatroom";
-    a.click();
+    redirectToURL("https://github.com/TheDokT0r/chatroom");
   }
 
   function getRoomName() {
@@ -29,7 +29,7 @@
 
 <div class="top-app-bar">
   <a href="/" class="top-app-bar-title">
-    <img src="/public/cios.svg" alt="cios-img" />
+    <img src={AppIcon} alt="cios-img" />
     CiosChat
   </a>
   {#if getRoomName()}

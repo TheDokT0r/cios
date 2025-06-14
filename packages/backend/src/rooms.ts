@@ -1,6 +1,7 @@
 import WebSocket from "ws";
 import { ServerAction, type PostMessage } from "shared";
 import { getUsername } from "./users";
+import { v4 as uid } from "uuid";
 
 export interface ChatRoom {
   id: string;
@@ -74,6 +75,29 @@ export function findUserRoom(ws: WebSocket) {
   if (!roomId) return undefined;
 
   return [...rooms].find((room) => room.id === roomId);
+}
+
+export const getRoomFromId = (roomId: string) =>
+  [...rooms].find((room) => room.id === roomId);
+
+export function createPrivateRoom(password: string) {
+  const hashedPassword = Bun.password.hashSync(password);
+  const roomId = uid();
+  const room: ChatRoom = {
+    id: roomId,
+    members: new Set(),
+    hashedPass: hashedPassword,
+  };
+
+  rooms.add(room);
+  return roomId;
+
+}
+
+export function isRoomPasswordCorrect(roomId: string, password: string) {
+  const room = getRoomFromId(roomId);
+  if (!room || !room.hashedPass) return false;
+  return Bun.password.verifySync(password, room.hashedPass);
 }
 
 export default rooms;

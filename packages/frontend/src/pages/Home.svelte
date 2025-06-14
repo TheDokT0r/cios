@@ -2,17 +2,23 @@
   import { toast } from "@zerodevx/svelte-toast";
   import { onMount } from "svelte";
   import {
+    ErrorCodes,
     isRoomNameValid,
     ServerAction,
     UserAction,
-    type PostMessage,
     type UserMessage,
   } from "shared";
-  import { ws } from "../libs/socket";
+  import {
+    formatIncomingMessage,
+    ws,
+  } from "../libs/socket";
   import "../styles/app.scss";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
-  import RepeatIcon from "@lucide/svelte/icons/repeat-2";
-  import DicesIcon from '@lucide/svelte/icons/dices';
+  import DicesIcon from "@lucide/svelte/icons/dices";
+  import LockIcon from "@lucide/svelte/icons/lock";
+  import redirectToURL from "../libs/redirect";
+  import UsernameGenerator from "../components/UsernameGenerator.svelte";
+  import errorHandler from "../libs/errorsHandler";
 
   let roomId = $state("");
   let username = $state("");
@@ -27,28 +33,19 @@
     ws.send(JSON.stringify(message));
   });
 
-  ws.onmessage = (ev) => {
-    const data = JSON.parse(ev.data) as PostMessage;
-    switch(data.type) {
+  ws.addEventListener("message", (ev) => {
+    const data = formatIncomingMessage(ev.data);
+    switch (data.type) {
       case ServerAction.ERROR: {
-        toast.push(data.message);
-        break;
+        return errorHandler(data.message as ErrorCodes);
       }
 
       case ServerAction.NICK: {
-        loading = true;
         username = data.message;
-        loading = false;
         break;
       }
-
-      case ServerAction.USER_JOINED: {
-        const link = document.createElement("a");
-        link.href = `/channel/c=${data.message}`;
-        link.click();
-      }
     }
-  };
+  });
 
   function onEnterClick(e: SubmitEvent) {
     e.preventDefault();
@@ -60,25 +57,14 @@
       return toast.push("Room ID can't have any white spaces in it");
     }
 
-    const link = document.createElement("a");
-    link.href = `/channel/c=${roomId}`;
-    link.click();
-  }
-
-  function onRegenerateUsernameClick(e: MouseEvent) {
-    e.preventDefault();
-    const message: UserMessage = {
-      action: UserAction.RENAME,
-      data: "",
-    };
-    ws.send(JSON.stringify(message));
+    redirectToURL(`/channel/c=${roomId}`);
   }
 
   function joinRandomRoom(e: MouseEvent) {
     e.preventDefault();
     const message: UserMessage = {
       action: UserAction.JOIN_RANDOM,
-      data: ""
+      data: "",
     };
     ws.send(JSON.stringify(message));
   }
@@ -90,7 +76,9 @@
   <div class="home-container">
     <h1>Welcome to CiosChat</h1>
     <h2>A place where you can explore random rooms with random people</h2>
-    <h3>Just write a random room name and see who waits for you on the other side!</h3>
+    <h3>
+      Just write a random room name and see who waits for you on the other side!
+    </h3>
     <form onsubmit={(e) => onEnterClick(e)}>
       <input bind:value={roomId} type="text" placeholder="Room ID" />
       <button>
@@ -98,17 +86,16 @@
       </button>
     </form>
     <div class="extra-options-section">
-        <button onclick={joinRandomRoom}>
-            <DicesIcon />
-        </button>
-    </div>
+      <button onclick={joinRandomRoom}>
+        <DicesIcon />
+      </button>
 
-    <div class="username-container">
-      <p>Your username is: <span>{username}</span></p>
-      <button onclick={onRegenerateUsernameClick}>
-        <RepeatIcon scale="5rem" />
+      <button onclick={() => redirectToURL("/create-private")}>
+        <LockIcon />
       </button>
     </div>
+
+    <UsernameGenerator {username} />
   </div>
 {/if}
 
@@ -125,7 +112,9 @@
       text-align: center;
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       margin-top: -1rem;
     }
 
@@ -137,26 +126,14 @@
     input {
       margin-right: 0.5rem;
     }
-
-    .username-container {
-      position: fixed;
-      right: 0.5rem;
-      bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-
-      button {
-        margin-left: 0.5rem;
-      }
-
-      span {
-        color: rgb(255, 107, 107);
-      }
-    }
   }
 
   .extra-options-section {
-      margin-top: 1rem;
-      display: flex;
+    margin-top: 1rem;
+    display: flex;
+
+    > * + * {
+      margin-left: 2rem; // or whatever margin you want
+    }
   }
 </style>

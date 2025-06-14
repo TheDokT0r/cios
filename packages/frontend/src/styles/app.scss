@@ -31,7 +31,8 @@ html body {
   }
 
   div,
-  form {
+  form,
+  dialog {
     background-color: vars.$back-color !important;
   }
 
@@ -100,6 +101,7 @@ button.danger {
 }
 
 @media (max-width: 500px) {
+
   input,
   textarea,
   button {
