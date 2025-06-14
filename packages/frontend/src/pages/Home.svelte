@@ -6,12 +6,10 @@
     isRoomNameValid,
     ServerAction,
     UserAction,
-    type PostMessage,
     type UserMessage,
   } from "shared";
   import {
     formatIncomingMessage,
-    generateNewUserMessage,
     ws,
   } from "../libs/socket";
   import "../styles/app.scss";

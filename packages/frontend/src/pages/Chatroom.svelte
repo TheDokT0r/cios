@@ -18,7 +18,7 @@
   import LoadingPage from "../components/LoadingPage.svelte";
   import { saveLogsToLocalStorage } from "../libs/messagesInStorage";
   import ServerMessage from "../components/ServerMessage.svelte";
-  import { toast } from "@zerodevx/svelte-toast";
+  import RoomPasswordDialog from "../components/RoomPasswordDialog.svelte";
 
   let messages: PostMessage[] = $state([]);
   let myNick = $state("");
@@ -26,7 +26,6 @@
   let roomId = $state("");
   let loading = $state(true);
   let chatLog: HTMLDivElement | null = $state(null);
-  let requiresPassword = $state(false);
 
   onMount(() => {
     loading = true;
@@ -38,11 +37,6 @@
 
     ws.addEventListener("message", (ev) => {
       const message = formatIncomingMessage(ev.data);
-
-      if(message.type === ServerAction.ERROR && message.message === ErrorCodes.REQUIRES_PASSWORD) {
-        requiresPassword = true;
-      }
-        
 
       if (message.type === ServerAction.NICK) {
         myNick = message.message;
@@ -113,10 +107,9 @@
 
 {#if loading}
   <LoadingPage />
-  {:else if requiresPassword}
-  <div>Room requires password</div>
 {:else}
   <div class="chat-container">
+    <RoomPasswordDialog {roomId} />
     <div class="chat-log" bind:this={chatLog}>
       {#each messages as message}
         {#if message.type === ServerAction.MESSAGE}
@@ -144,7 +137,7 @@
 <style lang="scss">
   .chat-container {
     position: fixed;
-    top: 64px; /* height of your TopAppBar */
+    top: 64px;
     left: 0;
     right: 0;
     bottom: 0;

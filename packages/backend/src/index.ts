@@ -5,6 +5,7 @@ import rooms, {
   createPrivateRoom,
   findUserRoom,
   getRoomFromId,
+  isRoomPasswordCorrect,
   removeMemberFromRoom,
   sendMessageToAllPeopleInRoom,
 } from "./rooms";
@@ -140,6 +141,16 @@ wss.on("connection", (ws, req) => {
       case UserAction.CREATE_PRIVATE: {
         const roomId = createPrivateRoom(data);
         return addMemberToRoom(roomId, ws, userIp);
+      }
+
+      case UserAction.JOIN_PRIVATE: {
+        const { roomId, password } = JSON.parse(data);
+        if (!roomId || !password) return;
+
+        if (isRoomPasswordCorrect(roomId, password)) {
+          sendSystemMessage(ws, ServerAction.CORRECT_PASSWORD);
+          addMemberToRoom(roomId, ws, userIp);
+        }
       }
     }
 

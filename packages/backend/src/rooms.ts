@@ -91,6 +91,13 @@ export function createPrivateRoom(password: string) {
 
   rooms.add(room);
   return roomId;
+
+}
+
+export function isRoomPasswordCorrect(roomId: string, password: string) {
+  const room = getRoomFromId(roomId);
+  if (!room || !room.hashedPass) return false;
+  return Bun.password.verifySync(password, room.hashedPass);
 }
 
 export default rooms;
