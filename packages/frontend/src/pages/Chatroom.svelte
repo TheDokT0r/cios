@@ -50,7 +50,10 @@
         scrollToBottom();
       }
 
-      if (message.type !== ServerAction.ERROR && message.type !== ServerAction.IS_IN_ROOM) {
+      if (
+        message.type !== ServerAction.ERROR &&
+        message.type !== ServerAction.IS_IN_ROOM
+      ) {
         messages.push(message);
         saveLogsToLocalStorage(roomId, messages);
       }
@@ -69,6 +72,31 @@
       scrollToBottom();
     }
   });
+
+  function mergeConsecutiveMessages(messages: PostMessage[]): PostMessage[] {
+    if (messages.length === 0) return [];
+
+    const merged: PostMessage[] = [];
+    let lastMessage = { ...messages[0] };
+
+    for (let i = 1; i < messages.length; i++) {
+      const current = messages[i];
+
+      if (
+        current.type === ServerAction.MESSAGE &&
+        lastMessage.type === ServerAction.MESSAGE &&
+        current.username === lastMessage.username
+      ) {
+        lastMessage.message += `\n${current.message}`;
+      } else {
+        merged.push(lastMessage);
+        lastMessage = { ...current };
+      }
+    }
+
+    merged.push(lastMessage);
+    return merged;
+  }
 
   onDestroy(() => {
     const leaveMessage: UserMessage = {
@@ -113,7 +141,7 @@
   <div class="chat-container">
     <RoomPasswordDialog {roomId} />
     <div class="chat-log" bind:this={chatLog}>
-      {#each messages as message}
+      {#each mergeConsecutiveMessages(messages) as message}
         {#if message.type === ServerAction.MESSAGE}
           <Message {message} username={myNick} />
         {:else}
