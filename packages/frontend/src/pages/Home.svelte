@@ -8,10 +8,7 @@
     UserAction,
     type UserMessage,
   } from "shared";
-  import {
-    formatIncomingMessage,
-    ws,
-  } from "../libs/socket";
+  import { formatIncomingMessage, ws } from "../libs/socket";
   import "../styles/app.scss";
   import SendHorizontalIcon from "@lucide/svelte/icons/send-horizontal";
   import DicesIcon from "@lucide/svelte/icons/dices";
@@ -19,10 +16,10 @@
   import redirectToURL from "../libs/redirect";
   import UsernameGenerator from "../components/UsernameGenerator.svelte";
   import errorHandler from "../libs/errorsHandler";
+  import LoadingPage from "../components/LoadingPage.svelte";
 
   let roomId = $state("");
   let username = $state("");
-  let loading = $state(false);
 
   onMount(() => {
     const message: UserMessage = {
@@ -70,34 +67,30 @@
   }
 </script>
 
-{#if loading}
-  <div>Loading...</div>
-{:else}
-  <div class="home-container">
-    <h1>Welcome to CiosChat</h1>
-    <h2>A place where you can explore random rooms with random people</h2>
-    <h3>
-      Just write a random room name and see who waits for you on the other side!
-    </h3>
-    <form onsubmit={(e) => onEnterClick(e)}>
-      <input bind:value={roomId} type="text" placeholder="Room ID" />
-      <button>
-        <SendHorizontalIcon />
-      </button>
-    </form>
-    <div class="extra-options-section">
-      <button onclick={joinRandomRoom}>
-        <DicesIcon />
-      </button>
+<div class="home-container">
+  <h1>Welcome to CiosChat</h1>
+  <h2>A place where you can explore random rooms with random people</h2>
+  <h3>
+    Just write a random room name and see who waits for you on the other side!
+  </h3>
+  <form onsubmit={(e) => onEnterClick(e)}>
+    <input bind:value={roomId} type="text" placeholder="Room ID" />
+    <button>
+      <SendHorizontalIcon />
+    </button>
+  </form>
+  <div class="extra-options-section">
+    <button onclick={joinRandomRoom}>
+      <DicesIcon />
+    </button>
 
-      <button onclick={() => redirectToURL("/create-private")}>
-        <LockIcon />
-      </button>
-    </div>
-
-    <UsernameGenerator {username} />
+    <button onclick={() => redirectToURL("/create-private")}>
+      <LockIcon />
+    </button>
   </div>
-{/if}
+
+  <UsernameGenerator {username} />
+</div>
 
 <style lang="scss">
   .home-container {
