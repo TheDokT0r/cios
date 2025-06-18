@@ -3,11 +3,8 @@
   import CopyIcon from "@lucide/svelte/icons/copy";
   import { toast } from "@zerodevx/svelte-toast";
   import redirectToURL from "../libs/redirect";
-  import AppIcon from '../assets/cios.svg';
-
-  function onGitHubButtonClick() {
-    redirectToURL("https://github.com/TheDokT0r/chatroom");
-  }
+  import AppIcon from "../assets/cios.svg";
+  import SettingsIcon from "@lucide/svelte/icons/settings";
 
   function getRoomName() {
     const urlParams = document.URL.toLowerCase().split("/channel/c=");
@@ -41,10 +38,12 @@
     </div>
   {/if}
   <div class="spacer"></div>
+  <button class="icon-button" onclick={() => redirectToURL("/settings")}>
+    <SettingsIcon />
+  </button>
   <button
-    title="Copy Room ID"
     class="icon-button"
-    onclick={onGitHubButtonClick}
+    onclick={() => redirectToURL("https://github.com/TheDokT0r/chatroom")}
   >
     <GitHubIcon />
   </button>
