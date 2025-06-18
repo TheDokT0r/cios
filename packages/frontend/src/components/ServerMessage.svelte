@@ -28,6 +28,8 @@
 </div>
 
 <style lang="scss">
+  @use "../styles/vars.scss";
+
   .message-container {
     display: flex;
     justify-content: space-between;
@@ -35,18 +37,19 @@
     border-radius: 6px;
     padding: 0.5rem;
     text-align: center;
+
+    &:hover {
+      background-color: adjust-color(
+        $color: vars.$back-color,
+        $lightness: 1%
+      ) !important;
+    }
   }
 
   .message {
     margin-left: 0.5rem;
     flex: 1;
   }
-
-  // .timestamp {
-  //   margin-left: auto;
-  //   font-size: 0.875rem;
-  //   color: #c7bcbc;
-  // }
 
   .username {
     color: #ce3e3e;

@@ -21,12 +21,12 @@
     <span style="white-space: pre-wrap;">{message.message}</span>
   </p>
 
-  <div class="timestamp">
-    <p>{format(message.date, "dd/MM/yyyy hh:mm")}</p>
-  </div>
+  <p>{format(message.date, "dd/MM/yyyy hh:mm")}</p>
 </div>
 
 <style lang="scss">
+  @use "../styles/vars.scss";
+
   .message-container {
     display: flex;
     justify-content: space-between;
@@ -34,18 +34,17 @@
     // border: 1px solid white;
     border-radius: 6px;
     padding: 0.5rem;
+
+    &:hover {
+      background-color: adjust-color(
+        $color: vars.$back-color,
+        $lightness: 1%
+      ) !important;
+    }
   }
 
   .message {
     margin-left: 0.5rem;
     flex: 1;
   }
-
-  .timestamp {
-    margin-left: auto;
-    font-size: 0.875rem;
-    color: #c7bcbc;
-  }
-
-
 </style>
