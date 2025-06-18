@@ -24,6 +24,9 @@
     } else if (url.includes("/create-private")) {
       const mod = await import("./pages/PrivateRoomCreationPage.svelte");
       currentPage = mod.default;
+    } else if (url.includes("/settings")) {
+      const mod = await import("./pages/SettingsPage.svelte");
+      currentPage = mod.default;
     } else {
       const mod = await import("./pages/PageNotFound.svelte");
       currentPage = mod.default;

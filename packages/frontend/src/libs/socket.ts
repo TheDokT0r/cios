@@ -4,12 +4,19 @@ import { writable } from "svelte/store";
 
 export const connected = writable(false);
 
-let backendUrl = window.location.host + "/ws";
-if (import.meta.env.MODE === "development") {
-  backendUrl = import.meta.env.VITE_BACKEND_URL;
+function getBackendUrl(): string {
+  const fromLocalStorage = localStorage.getItem("backend url");
+  if (fromLocalStorage && fromLocalStorage.length > 1) {
+    return fromLocalStorage;
+  } else if (import.meta.env.MODE === "development") {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+
+  return "wss://" + window.location.host + "/ws";
 }
 
-export const ws = new WebSocket(`ws://${backendUrl}`);
+const backendUrl = getBackendUrl();
+export const ws = new WebSocket(backendUrl);
 if (import.meta.env.DEV) {
 }
 
