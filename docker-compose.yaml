@@ -1,12 +1,12 @@
 services:
   frontend:
     image: ghcr.io/thedokt0r/chatroom-frontend:latest
-    container_name: chatroom-frontend
+    container_name: cios-frontend
     ports:
       - 3000:80
 
   backend:
     image: ghcr.io/thedokt0r/chatroom-backend:latest
-    container_name: chatroom-backend
+    container_name: cios-backend
     ports:
       - 4000:80

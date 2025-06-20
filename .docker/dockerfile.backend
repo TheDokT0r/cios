@@ -5,8 +5,9 @@ RUN bun i --frozen-lockfile
 WORKDIR /app/packages/backend
 RUN bun build --compile --outfile=/build src/index.ts
 
-FROM ubuntu:24 AS base
+FROM ubuntu:24.10 AS base
 COPY --from=build /build /usr/bin/
+COPY nginx/frontend.conf /etc/nginx/nginx.conf
 ENV PORT=80
 EXPOSE 80
 ENTRYPOINT [ "build" ]
