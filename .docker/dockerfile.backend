@@ -5,7 +5,7 @@ RUN bun i --frozen-lockfile
 WORKDIR /app/packages/backend
 RUN bun build --compile --outfile=/build src/index.ts
 
-FROM debian:latest AS base
+FROM ubuntu:24 AS base
 COPY --from=build /build /usr/bin/
 ENV PORT=80
 EXPOSE 80

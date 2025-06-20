@@ -76,6 +76,8 @@ jobs:
           - image: chatroom-frontend
             context: .
             dockerfile: .docker/dockerfile.frontend
+            build-args:
+              BACKEND_URL={{secrets.BACKEND_URL}}
           - image: chatroom-backend
             context: .
             dockerfile: .docker/dockerfile.backend
