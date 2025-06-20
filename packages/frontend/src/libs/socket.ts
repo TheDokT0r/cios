@@ -8,11 +8,11 @@ function getBackendUrl(): string {
   const fromLocalStorage = localStorage.getItem("backend url");
   if (fromLocalStorage && fromLocalStorage.length > 1) {
     return fromLocalStorage;
-  } else if (import.meta.env.MODE === "development") {
+  } else if (import.meta.env.VITE_BACKEND_URL) {
     return import.meta.env.VITE_BACKEND_URL;
   }
 
-  return "wss://" + window.location.host + "/ws";
+  return "wss://" + window.location.host + "/ws"; // Fallback
 }
 
 const backendUrl = getBackendUrl();
