@@ -5,6 +5,7 @@
   import TopAppBar from "./components/TopAppBar.svelte";
   import { connected } from "./libs/socket";
   import { type Component } from "svelte";
+  import LoadingPage from "./components/LoadingPage.svelte";
 
   let isConnected = false;
   connected.subscribe((value) => {
@@ -37,8 +38,12 @@
 </script>
 
 <main>
-  <SvelteToast />
-  <TopAppBar />
+  {#if !isConnected}
+    <LoadingPage />
+  {:else}
+    <SvelteToast />
+    <TopAppBar />
 
-  <svelte:component this={currentPage} />
+    <svelte:component this={currentPage} />
+  {/if}
 </main>
