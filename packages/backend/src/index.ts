@@ -172,6 +172,10 @@ wss.on("connection", (ws, req) => {
     ws.on("close", () => {
       removeMemberFromRoom(ws, getUsername(userIp));
     });
+
+    ws.on("error", (err) => {
+      console.error(err.message);
+    });
   });
 });
 
