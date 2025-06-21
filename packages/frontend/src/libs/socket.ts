@@ -6,10 +6,11 @@ export const connected = writable(false);
 
 function getBackendUrl(): string {
   const fromLocalStorage = localStorage.getItem("backend url");
+  const envVar: string = import.meta.env.VITE_BACKEND_URL;
   if (fromLocalStorage && fromLocalStorage.length > 1) {
     return fromLocalStorage;
-  } else if (import.meta.env.VITE_BACKEND_URL) {
-    return import.meta.env.VITE_BACKEND_URL;
+  } else if (envVar) {
+    return envVar;
   }
 
   return "wss://" + window.location.host + "/ws"; // Fallback
@@ -27,6 +28,10 @@ ws.addEventListener("open", () => {
 ws.addEventListener("close", () => {
   connected.set(false);
 });
+
+ws.addEventListener("error" ,(ev) => {
+  throw new Error(ev.toString());
+})
 
 export function remindNick() {
   const message: UserMessage = {

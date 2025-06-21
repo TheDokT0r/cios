@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: .docker/dockerfile.frontend
+      args:
+        - BACKEND_URL=wss://ws.cioschat.com
     ports:
       - 3000:80
 
