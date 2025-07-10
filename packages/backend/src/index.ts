@@ -99,13 +99,6 @@ wss.on("connection", (ws, req) => {
 
       case UserAction.RENAME: {
         const newNick = regenerateUsername(userIp);
-        const message: PostMessage = {
-          type: ServerAction.NICK,
-          message: newNick,
-          date: new Date(),
-          username: "System",
-        };
-
         return sendSystemMessage(ws, ServerAction.NICK, newNick);
       }
 

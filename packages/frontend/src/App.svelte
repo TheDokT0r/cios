@@ -4,8 +4,8 @@
   import "@fontsource/rubik";
   import TopAppBar from "./components/TopAppBar.svelte";
   import { connected } from "./libs/socket";
-  import { type Component } from "svelte";
   import LoadingPage from "./components/LoadingPage.svelte";
+  import { type Component } from "svelte";
 
   let isConnected = false;
   connected.subscribe((value) => {
@@ -34,8 +34,15 @@
     }
   }
 
-  onMount(loadPage);
+  function setupRouting() {
+    loadPage();
+
+    window.addEventListener("popstate", loadPage);
+  }
+
+  onMount(setupRouting);
 </script>
+
 
 <main>
   {#if !isConnected}

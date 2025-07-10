@@ -25,10 +25,10 @@
 </script>
 
 <div class="top-app-bar">
-  <a href="/" class="top-app-bar-title">
+  <button class="top-app-bar-title" onclick={() => redirectToURL("/")}>
     <img src={AppIcon} alt="cios-img" />
     CiosChat
-  </a>
+  </button>
   {#if getRoomName()}
     <div class="room-name-container">
       <h3>Room ID: <span>{getRoomName()}</span></h3>
@@ -43,7 +43,10 @@
   </button>
   <button
     class="icon-button"
-    onclick={() => redirectToURL("https://github.com/TheDokT0r/chatroom")}
+    onclick={() =>
+      redirectToURL("https://github.com/TheDokT0r/chatroom", {
+        pageReload: true,
+      })}
   >
     <GitHubIcon />
   </button>
@@ -83,6 +86,8 @@
   }
 
   .top-app-bar-title {
+    all: unset;
+    cursor: pointer;
     display: flex;
     align-items: center;
     font-size: 1.25rem;
