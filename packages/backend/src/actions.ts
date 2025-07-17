@@ -1,5 +1,4 @@
 import type WebSocket from "ws";
-import { getUsername } from "./users";
 import {ErrorCodes, ServerAction, type PostMessage} from 'shared';
 
 /**

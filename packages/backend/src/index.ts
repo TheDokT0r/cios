@@ -32,7 +32,7 @@ wss.on("connection", (ws, req) => {
   if (req.socket.remoteAddress) {
     const message: PostMessage = {
       type: ServerAction.NICK,
-      message: getUsername(req.socket.remoteAddress),
+      message: getUsername(ws),
       date: new Date(),
       username: "System",
     };
@@ -93,19 +93,19 @@ wss.on("connection", (ws, req) => {
           type: ServerAction.MESSAGE,
           message: data,
           date: new Date(),
-          username: getUsername(userIp),
+          username: getUsername(ws),
         });
       }
 
       case UserAction.RENAME: {
-        const newNick = regenerateUsername(userIp);
+        const newNick = regenerateUsername(ws);
         return sendSystemMessage(ws, ServerAction.NICK, newNick);
       }
 
       case UserAction.REMIND_NICK: {
         const message: PostMessage = {
           type: ServerAction.NICK,
-          message: getUsername(userIp),
+          message: getUsername(ws),
           date: new Date(),
           username: "System",
         };
@@ -163,7 +163,7 @@ wss.on("connection", (ws, req) => {
     }
 
     ws.on("close", () => {
-      removeMemberFromRoom(ws, getUsername(userIp));
+      removeMemberFromRoom(ws, getUsername(ws));
     });
 
     ws.on("error", (err) => {
