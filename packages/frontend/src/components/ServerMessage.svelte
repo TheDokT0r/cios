@@ -1,6 +1,5 @@
 <script lang="ts">
   import { ServerAction, type PostMessage } from "shared";
-  // import { format } from "date-fns";
 
   interface Props {
     message: PostMessage;
@@ -9,49 +8,43 @@
   const { message }: Props = $props();
 </script>
 
-<div class="message-container">
+<div class="server-message-container">
   {#if message.type === ServerAction.USER_JOINED}
-    <p>
-      <span class="username">{message.username}</span> Has joined the chat
+    <p class="system-text">
+      <span class="username">{message.username}</span> has joined the chat
     </p>
   {:else if message.type === ServerAction.USER_LEFT}
-    <p>
-      <span class="username">{message.username}</span> Has left the chat
+    <p class="system-text">
+      <span class="username">{message.username}</span> has left the chat
     </p>
   {:else}
-    <p class="message">{message.message}</p>
+    <p class="system-text">{message.message}</p>
   {/if}
-
-  <!-- <div class="timestamp"> -->
-  <!-- <p>{format(message.date, "dd/MM/yyyy hh:mm")}</p> -->
-  <!-- </div> -->
 </div>
 
 <style lang="scss">
   @use "../styles/vars.scss";
 
-  .message-container {
+  .server-message-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    border-radius: 6px;
     padding: 0.5rem;
+    margin: 0.5rem 0;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.02);
     text-align: center;
-
-    &:hover {
-      background-color: adjust-color(
-        $color: vars.$back-color,
-        $lightness: 1%
-      ) !important;
-    }
+    font-size: 0.9rem;
+    color: #aaa;
   }
 
-  .message {
-    margin-left: 0.5rem;
-    flex: 1;
+  .system-text {
+    margin: 0;
+    font-style: italic;
   }
 
   .username {
     color: #ce3e3e;
+    font-weight: 500;
   }
 </style>
