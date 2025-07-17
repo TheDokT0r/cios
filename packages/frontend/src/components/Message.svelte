@@ -18,7 +18,9 @@
       {message.username}:
     </b>
 
-    <span style="white-space: pre-wrap;">{message.message}</span>
+    <br />
+
+    <span class="text-message">{message.message}</span>
   </p>
 
   <p>{format(message.date, "dd/MM/yyyy hh:mm")}</p>
@@ -46,5 +48,14 @@
   .message {
     margin-left: 0.5rem;
     flex: 1;
+  }
+
+  .text-message {
+    white-space: pre-wrap;
+    margin-left: 1.5rem;
+    padding: 0.5rem;
+    // background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    display: inline-block;
   }
 </style>
