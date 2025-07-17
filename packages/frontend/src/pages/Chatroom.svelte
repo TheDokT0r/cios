@@ -119,6 +119,7 @@
 
     ws.send(JSON.stringify(message));
     userInput = "";
+    scrollToBottom();
   }
 
   function handleKeyDown(e: KeyboardEvent) {
