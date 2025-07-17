@@ -1,3 +1,5 @@
+import type { WebSocket } from "ws";
+
 const nameList = [
   "Time",
   "Past",
@@ -177,7 +179,7 @@ const nameList = [
 
 const randomElementFromList = () => nameList[Math.floor(Math.random() * nameList.length)]!
 
-const usernames = new Map<string, string>();
+const usernames = new Map<WebSocket, string>();
 
 const generateRandomUsername = () => {
   const chance = Math.floor(Math.random() * 100);
@@ -192,17 +194,17 @@ const generateRandomUsername = () => {
   return `${randomElementFromList()}${randomElementFromList()}${randomElementFromList()}${randomElementFromList()}`
 };
 
-export function getUsername(userIp: string): string {
-  if (usernames.has(userIp)) {
-    return usernames.get(userIp)!;
+export function getUsername(ws: WebSocket): string {
+  if (usernames.has(ws)) {
+    return usernames.get(ws)!;
   }
 
-  usernames.set(userIp, generateRandomUsername());
-  return usernames.get(userIp)!;
+  usernames.set(ws, generateRandomUsername());
+  return usernames.get(ws)!;
 }
 
-export function regenerateUsername(userIp: string) {
+export function regenerateUsername(ws: WebSocket) {
   const newNick = generateRandomUsername();
-  usernames.set(userIp, newNick);
+  usernames.set(ws, newNick);
   return newNick;
 }
