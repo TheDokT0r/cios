@@ -3,6 +3,10 @@
   "workspaces": {
     "": {
       "name": "cios",
+      "dependencies": {
+        "camelcase": "^8.0.0",
+        "random-words": "^2.0.1",
+      },
     },
     "packages/backend": {
       "name": "backend",
@@ -222,6 +226,8 @@
 
     "bun-types": ["bun-types@1.2.18", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-04+Eha5NP7Z0A9YgDAzMk5PHR16ZuLVa83b26kH5+cp1qZW4F6FmAURngE7INf4tKOvCE69vYvDEwoNl1tGiWw=="],
 
+    "camelcase": ["camelcase@8.0.0", "", {}, "sha512-8WB3Jcas3swSvjIeA2yvCJ+Miyz5l1ZmB6HFb9R1317dt9LCQoswg/BGrmAmkWVEszSrrg4RwmO46qIm2OEnSA=="],
+
     "chokidar": ["chokidar@4.0.3", "", { "dependencies": { "readdirp": "^4.0.1" } }, "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA=="],
 
     "clsx": ["clsx@2.1.1", "", {}, "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="],
@@ -282,6 +288,8 @@
 
     "postcss": ["postcss@8.5.6", "", { "dependencies": { "nanoid": "^3.3.11", "picocolors": "^1.1.1", "source-map-js": "^1.2.1" } }, "sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg=="],
 
+    "random-words": ["random-words@2.0.1", "", { "dependencies": { "seedrandom": "^3.0.5" } }, "sha512-nZNJAmgcFmtJMTDDIUCm/iK4R6RydC6NvALvWhYItXQrgYGk1F7Gww416LpVROFQtfVd5TaLEf4WuSsko03N7w=="],
+
     "readdirp": ["readdirp@4.1.2", "", {}, "sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg=="],
 
     "rollup": ["rollup@4.43.0", "", { "dependencies": { "@types/estree": "1.0.7" }, "optionalDependencies": { "@rollup/rollup-android-arm-eabi": "4.43.0", "@rollup/rollup-android-arm64": "4.43.0", "@rollup/rollup-darwin-arm64": "4.43.0", "@rollup/rollup-darwin-x64": "4.43.0", "@rollup/rollup-freebsd-arm64": "4.43.0", "@rollup/rollup-freebsd-x64": "4.43.0", "@rollup/rollup-linux-arm-gnueabihf": "4.43.0", "@rollup/rollup-linux-arm-musleabihf": "4.43.0", "@rollup/rollup-linux-arm64-gnu": "4.43.0", "@rollup/rollup-linux-arm64-musl": "4.43.0", "@rollup/rollup-linux-loongarch64-gnu": "4.43.0", "@rollup/rollup-linux-powerpc64le-gnu": "4.43.0", "@rollup/rollup-linux-riscv64-gnu": "4.43.0", "@rollup/rollup-linux-riscv64-musl": "4.43.0", "@rollup/rollup-linux-s390x-gnu": "4.43.0", "@rollup/rollup-linux-x64-gnu": "4.43.0", "@rollup/rollup-linux-x64-musl": "4.43.0", "@rollup/rollup-win32-arm64-msvc": "4.43.0", "@rollup/rollup-win32-ia32-msvc": "4.43.0", "@rollup/rollup-win32-x64-msvc": "4.43.0", "fsevents": "~2.3.2" }, "bin": { "rollup": "dist/bin/rollup" } }, "sha512-wdN2Kd3Twh8MAEOEJZsuxuLKCsBEo4PVNLK6tQWAn10VhsVewQLzcucMgLolRlhFybGxfclbPeEYBaP6RvUFGg=="],
@@ -289,6 +297,8 @@
     "sade": ["sade@1.8.1", "", { "dependencies": { "mri": "^1.1.0" } }, "sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A=="],
 
     "sass": ["sass@1.89.2", "", { "dependencies": { "chokidar": "^4.0.0", "immutable": "^5.0.2", "source-map-js": ">=0.6.2 <2.0.0" }, "optionalDependencies": { "@parcel/watcher": "^2.4.1" }, "bin": { "sass": "sass.js" } }, "sha512-xCmtksBKd/jdJ9Bt9p7nPKiuqrlBMBuuGkQlkhZjjQk3Ty48lv93k5Dq6OPkKt4XwxDJ7tvlfrTa1MPA9bf+QA=="],
+
+    "seedrandom": ["seedrandom@3.0.5", "", {}, "sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg=="],
 
     "shared": ["shared@workspace:packages/shared"],
 
